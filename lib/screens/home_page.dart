@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/screens/transaction_list.dart';
+import 'package:coin_sage/widgets/transaction_list.dart';
+import 'package:coin_sage/widgets/grid_buttons.dart';
 import 'package:coin_sage/screens/add_new_expense.dart';
 import 'package:coin_sage/screens/add_new_room.dart';
 
 import 'package:coin_sage/data/expense_list.dart';
 import 'package:coin_sage/models/transaction.dart';
 
-import 'package:coin_sage/widgets/grid_buttons.dart';
+import 'package:coin_sage/assets/icon.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   void _addNewExpense(TransactionType newType) async {
     Transaction? newExpense = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddExpenseScreen(type: newType),
+        builder: (context) => AddExpenseScreen(),
       ),
     );
     if (newExpense == null) return;
@@ -40,10 +41,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addNewRoom() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => AddRoomScreen(),
-      ),
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      useSafeArea: true,
+      builder: (ctx) => AddRoomScreen(),
     );
   }
 
@@ -95,35 +97,27 @@ class _HomePageState extends State<HomePage> {
           iconSize: 26,
           currentIndex: _selectedPage,
           onTap: _selectPage,
-          items: const [
+          items: [
             BottomNavigationBarItem(
               //tooltip: 'home',
               label: '.',
-              icon: Icon(
-                Icons.home_outlined,
-              ),
-              activeIcon: Icon(
-                Icons.home_filled,
-              ),
+              icon: homeIcon,
+              activeIcon: homeActive,
             ),
             BottomNavigationBarItem(
               label: '.',
-              icon: Icon(
-                Icons.stacked_bar_chart_rounded,
-              ),
-              activeIcon: Icon(
-                Icons.bar_chart_rounded,
-              ),
+              icon: statistic,
+              activeIcon: statisticActive,
             ),
             BottomNavigationBarItem(
               label: '.',
-              icon: Icon(
-                Icons.account_balance_wallet_rounded,
-              ),
+              icon: chat,
+              activeIcon: chatActive,
             ),
             BottomNavigationBarItem(
               label: '.',
-              icon: Icon(Icons.settings),
+              icon: setting,
+              activeIcon: settingActive,
             ),
           ],
         ));

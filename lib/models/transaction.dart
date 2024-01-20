@@ -14,6 +14,8 @@ const categoryIcon = {
   IncomeCategory.work: Icons.work_outline,
   IncomeCategory.lended: Icons.currency_exchange_rounded,
   IncomeCategory.investment: Icons.account_balance_outlined,
+  TransactionType.Debt: Icons.currency_exchange,
+  TransactionType.Subcriptions: Icons.description_outlined,
 };
 
 class Transaction {
@@ -48,6 +50,8 @@ enum IncomeCategory {
 }
 
 enum TransactionType {
-  income,
-  expense,
+  Income,
+  Expense,
+  Debt,
+  Subcriptions,
 }

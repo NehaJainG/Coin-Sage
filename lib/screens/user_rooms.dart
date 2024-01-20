@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:coin_sage/data/room_list.dart';
 import 'package:coin_sage/assets/icon.dart';
+import 'package:coin_sage/assets/defaults.dart';
 import 'package:coin_sage/models/room.dart';
 import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/room_detail.dart';
@@ -53,9 +54,9 @@ class RoomCard extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
+              color: black.withOpacity(0.2),
+              //spreadRadius: 5,
+              blurRadius: 5,
               offset: Offset(2, 5), // changes position of shadow
             ),
           ],
@@ -69,7 +70,7 @@ class RoomCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(10),
                 ),
-                color: Colors.blue.withOpacity(0.75),
+                color: blue,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,11 +95,11 @@ class RoomCard extends StatelessWidget {
                 left: 20,
                 right: 20,
               ),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(10),
                 ),
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: black,
               ),
               child: Text(
                 'room.members',

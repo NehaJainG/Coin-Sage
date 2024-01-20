@@ -16,7 +16,7 @@ class GridButtons extends StatelessWidget {
   Widget getButtonWidget(Widget child) {
     return SizedBox(
       width: 175,
-      height: 60,
+      height: 50,
       child: child,
     );
   }
@@ -31,7 +31,7 @@ class GridButtons extends StatelessWidget {
             getButtonWidget(
               ElevatedButton.icon(
                 onPressed: () {
-                  addNewExpense(TransactionType.expense);
+                  addNewExpense(TransactionType.Expense);
                 },
                 icon: const Icon(Icons.add),
                 label: const Text('Add Expense'),
@@ -40,7 +40,7 @@ class GridButtons extends StatelessWidget {
             getButtonWidget(
               ElevatedButton.icon(
                 onPressed: () {
-                  addNewExpense(TransactionType.income);
+                  addNewExpense(TransactionType.Income);
                 },
                 icon: const Icon(Icons.add),
                 label: const Text('Add Income'),

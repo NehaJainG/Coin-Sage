@@ -18,59 +18,81 @@ class _TransactionItemState extends State<TransactionItem> {
   Widget build(BuildContext context) {
     Transaction transaction = widget.transaction;
     return Card(
-      color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.70),
-      shadowColor: Theme.of(context).colorScheme.onBackground,
+      surfaceTintColor: Colors.white54,
+      elevation: 4,
+      //borderOnForeground: false,
+      //color: Colors.white,
+      //shadowColor: Colors.red,
       margin: const EdgeInsets.symmetric(
         horizontal: 10,
         vertical: 8,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      child: Column(
+        // padding: const EdgeInsets.symmetric(
+        //   horizontal: 14,
+        //   vertical: 8,
+        // ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: transaction.type == TransactionType.Expense
+                  ? const Color.fromARGB(255, 255, 114, 98)
+                  : const Color.fromARGB(255, 103, 249, 108),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(10),
+              ),
+            ),
+            width: double.infinity,
+            height: 5,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
               children: [
                 Text(
-                  transaction.title,
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  transaction.title.toUpperCase(),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        //color: Colors.white,
                       ),
                 ),
                 const Spacer(),
                 Icon(
                   categoryIcon[transaction.category],
-                  color: Colors.white,
+                  //color: Colors.white,
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+              bottom: 10,
+            ),
+            child: Row(
               children: [
                 Text(
                   cardDateFormatter.format(transaction.date),
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         fontWeight: FontWeight.w400,
-                        color: Colors.white,
+                        //color: Colors.white,
                       ),
                 ),
                 const Spacer(),
                 Text(
                   'Rs. ${transaction.amount}',
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: transaction.type == TransactionType.expense
+                        color: transaction.type == TransactionType.Expense
                             ? const Color.fromARGB(255, 255, 114, 98)
                             : const Color.fromARGB(255, 103, 249, 108),
                       ),
                 ),
               ],
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
