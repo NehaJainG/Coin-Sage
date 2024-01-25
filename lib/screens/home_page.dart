@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/widgets/transaction_list.dart';
 import 'package:coin_sage/widgets/grid_buttons.dart';
-import 'package:coin_sage/screens/add_new_expense.dart';
 import 'package:coin_sage/screens/add_new_room.dart';
-
-import 'package:coin_sage/data/expense_list.dart';
 import 'package:coin_sage/models/transaction.dart';
-
+import 'package:coin_sage/screens/add_new_expense.dart';
 import 'package:coin_sage/assets/icon.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedPage = 0;
-  final List<Transaction> userTransaction = transactionList;
+  //final List<Transaction> userTransaction = transactionList;
 
   void _selectPage(int currentPageIndex) {
     //body
@@ -28,16 +24,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _addNewExpense(TransactionType newType) async {
-    Transaction? newExpense = await Navigator.of(context).push(
+  void _addNewExpense(TransactionType newType) {
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AddExpenseScreen(),
       ),
     );
-    if (newExpense == null) return;
-    setState(() {
-      userTransaction.add(newExpense);
-    });
   }
 
   void _addNewRoom() {
@@ -65,27 +57,9 @@ class _HomePageState extends State<HomePage> {
                 addNewExpense: _addNewExpense,
                 addNewRoom: _addNewRoom,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, top: 14),
-                child: Text(
-                  'Your Transactions...',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.normal,
-                      ),
-                ),
-              ),
-              Row(children: [
-                TextButton(
-                  child: Text('Filter 1'),
-                  onPressed: () {},
-                ),
-                TextButton(
-                  child: Text('Filter 2'),
-                  onPressed: () {},
-                ),
-              ]),
-              Expanded(
-                  child: TransactionList(userTransaction: userTransaction)),
+
+              // Expanded(
+              //     child: TransactionList(userTransaction: userTransaction)),
               const SizedBox(height: 20),
             ],
           ),

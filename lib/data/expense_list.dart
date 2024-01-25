@@ -1,29 +1,35 @@
 import 'package:coin_sage/models/transaction.dart';
+import 'package:flutter/material.dart';
 
-final transactionList = [
-  Transaction(
-    title: 'Flutter course',
-    amount: 500,
-    type: TransactionType.Expense,
-    category: ExpenseCategory.study,
-    date: DateTime(2023, 10, 10, 17, 30),
+final List<Transaction> expenseData = [
+  Expense(
+    amount: 50.0,
+    date: DateTime.now().subtract(Duration(days: 5)),
+    comments: 'Grocery shopping',
+    category: ExpenseCategory.Groceries,
   ),
-  Transaction(
-    title: 'Friends out',
-    amount: 800,
-    type: TransactionType.Expense,
-    category: ExpenseCategory.leisure,
-    date: DateTime(2024, 1, 10),
+  Income(
+    amount: 1000.0,
+    date: DateTime.now().subtract(Duration(days: 10)),
+    comments: 'Monthly salary',
+    category: IncomeCategory.Salary,
+    isSteady: true,
   ),
-  Transaction(
-    title: 'Refill',
-    amount: 1000,
-    type: TransactionType.Expense,
-    category: ExpenseCategory.grocery,
-    date: DateTime(
-      2023,
-      11,
-      10,
-    ),
+  Debt(
+    amount: 200.0,
+    date: DateTime.now().subtract(Duration(days: 15)),
+    comments: 'Borrowed money from a friend',
+    category: DebtCategory.FamilyFriend,
+    returnDate: DateTime.now(),
+    reminderTime: TimeOfDay.now(),
+  ),
+  Subscription(
+    id: 'ID4',
+    amount: 15.0,
+    date: DateTime.now().subtract(Duration(days: 20)),
+    comments: 'Monthly streaming subscription',
+    category: SubscriptionCategory.Streaming,
+    dueDate: DateTime.now(),
+    reminderTime: TimeOfDay.now(),
   ),
 ];

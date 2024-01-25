@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/models/transaction.dart';
+import 'package:coin_sage/assets/icon.dart';
 
 class TransactionItem extends StatefulWidget {
   const TransactionItem({super.key, required this.transaction});
@@ -51,7 +52,7 @@ class _TransactionItemState extends State<TransactionItem> {
             child: Row(
               children: [
                 Text(
-                  transaction.title.toUpperCase(),
+                  'title',
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                         //color: Colors.white,
@@ -59,7 +60,7 @@ class _TransactionItemState extends State<TransactionItem> {
                 ),
                 const Spacer(),
                 Icon(
-                  categoryIcon[transaction.category],
+                  categoryIcons[transaction.category],
                   //color: Colors.white,
                 ),
               ],
@@ -74,7 +75,7 @@ class _TransactionItemState extends State<TransactionItem> {
             child: Row(
               children: [
                 Text(
-                  cardDateFormatter.format(transaction.date),
+                  dateFormatter.format(transaction.date),
                   style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         fontWeight: FontWeight.w400,
                         //color: Colors.white,

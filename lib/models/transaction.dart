@@ -2,56 +2,140 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 final formatter = DateFormat.yMd();
-final cardDateFormatter = DateFormat.yMMMd();
-
-const categoryIcon = {
-  ExpenseCategory.grocery: Icons.local_grocery_store_outlined,
-  ExpenseCategory.leisure: Icons.movie_creation_outlined,
-  ExpenseCategory.vacation: Icons.connecting_airports,
-  ExpenseCategory.personal: Icons.favorite_rounded,
-  ExpenseCategory.study: Icons.school_rounded,
-  ExpenseCategory.work: Icons.work,
-  IncomeCategory.work: Icons.work_outline,
-  IncomeCategory.lended: Icons.currency_exchange_rounded,
-  IncomeCategory.investment: Icons.account_balance_outlined,
-  TransactionType.Debt: Icons.currency_exchange,
-  TransactionType.Subcriptions: Icons.description_outlined,
-};
-
-class Transaction {
-  Transaction({
-    required this.title,
-    required this.amount,
-    required this.type,
-    required this.date,
-    required this.category,
-  });
-  final String title;
-  final double amount;
-  final TransactionType type;
-  final category;
-
-  final DateTime date;
-}
-
-enum ExpenseCategory {
-  work,
-  study,
-  grocery,
-  vacation,
-  leisure,
-  personal,
-}
-
-enum IncomeCategory {
-  work,
-  investment,
-  lended,
-}
+final dateFormatter = DateFormat.yMMMd();
+final timeFormatter = DateFormat.jm();
 
 enum TransactionType {
   Income,
   Expense,
   Debt,
   Subcriptions,
+}
+
+enum ExpenseCategory {
+  Groceries,
+  Dining,
+  Entertainment,
+  Transportation,
+  Utilities,
+  RentMortgage,
+  Health,
+  Education,
+  PersonalCare,
+  Other,
+}
+
+enum IncomeCategory {
+  Salary,
+  Freelance,
+  Business,
+  Investment,
+  Rental,
+  Other,
+}
+
+enum DebtCategory {
+  Loan,
+  FamilyFriend,
+  CreditCard,
+  Other,
+}
+
+enum SubscriptionCategory {
+  Streaming,
+  MagazineNewspaper,
+  GymMembership,
+  SoftwareOnlineServices,
+  Utilities,
+  Insurance,
+  Other,
+}
+
+class Transaction {
+  final double amount;
+  final DateTime date;
+  final String comments;
+  final TransactionType type;
+  final dynamic category; // Use dynamic for flexibility
+
+  Transaction({
+    required this.amount,
+    required this.date,
+    required this.comments,
+    required this.type,
+    required this.category,
+  });
+}
+
+class Expense extends Transaction {
+  Expense({
+    required double amount,
+    required DateTime date,
+    required String comments,
+    required ExpenseCategory category,
+  }) : super(
+          amount: amount,
+          date: date,
+          comments: comments,
+          type: TransactionType.Expense,
+          category: category,
+        );
+}
+
+class Income extends Transaction {
+  final bool isSteady;
+
+  Income({
+    required double amount,
+    required DateTime date,
+    required String comments,
+    required IncomeCategory category,
+    required this.isSteady,
+  }) : super(
+          amount: amount,
+          date: date,
+          comments: comments,
+          type: TransactionType.Income,
+          category: category,
+        );
+}
+
+class Debt extends Transaction {
+  final DateTime returnDate;
+  final TimeOfDay reminderTime;
+
+  Debt({
+    required double amount,
+    required DateTime date,
+    required String comments,
+    required DebtCategory category,
+    required this.returnDate,
+    required this.reminderTime,
+  }) : super(
+          amount: amount,
+          date: date,
+          comments: comments,
+          type: TransactionType.Debt,
+          category: category,
+        );
+}
+
+class Subscription extends Transaction {
+  final DateTime dueDate;
+  final TimeOfDay reminderTime;
+
+  Subscription({
+    required double amount,
+    required DateTime date,
+    required String comments,
+    required SubscriptionCategory category,
+    required this.dueDate,
+    required this.reminderTime,
+  }) : super(
+          amount: amount,
+          date: date,
+          comments: comments,
+          type: TransactionType.Subcriptions,
+          category: category,
+        );
 }

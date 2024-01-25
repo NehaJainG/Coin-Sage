@@ -10,7 +10,7 @@ Icon searchMemberIcon = const Icon(Icons.person_search_rounded);
 
 //add new Expense icons
 Icon rupeeIcon = const Icon(Icons.currency_rupee_rounded);
-
+Icon calenderIcon = const Icon(Icons.calendar_month_rounded);
 Map<TransactionType, Icon> iconList = {
   TransactionType.Expense: Icon(Icons.call_made_rounded),
   TransactionType.Income: Icon(Icons.call_received_rounded),
@@ -27,3 +27,42 @@ Icon homeActive = const Icon(Icons.home_filled);
 Icon statisticActive = const Icon(Icons.bar_chart_rounded);
 Icon chatActive = const Icon(Icons.chat_bubble_rounded);
 Icon settingActive = const Icon(Icons.settings);
+
+//icons for categories:
+// Map to associate icons with each category
+const categoryIcons = {
+  // Expense Categories
+  ExpenseCategory.Groceries: Icons.shopping_cart,
+  ExpenseCategory.Dining: Icons.fastfood,
+  ExpenseCategory.Entertainment: Icons.movie,
+  ExpenseCategory.Transportation: Icons.directions_car,
+  ExpenseCategory.Utilities: Icons.lightbulb_outline,
+  ExpenseCategory.RentMortgage: Icons.home,
+  ExpenseCategory.Health: Icons.local_hospital,
+  ExpenseCategory.Education: Icons.school,
+  ExpenseCategory.PersonalCare: Icons.person,
+  ExpenseCategory.Other: Icons.attach_money,
+
+  // Income Categories
+  IncomeCategory.Salary: Icons.account_balance,
+  IncomeCategory.Freelance: Icons.work,
+  IncomeCategory.Business: Icons.business,
+  IncomeCategory.Investment: Icons.trending_up,
+  IncomeCategory.Rental: Icons.home,
+  IncomeCategory.Other: Icons.attach_money,
+
+  // Debt Categories
+  DebtCategory.Loan: Icons.attach_money,
+  DebtCategory.FamilyFriend: Icons.people,
+  DebtCategory.CreditCard: Icons.credit_card,
+  DebtCategory.Other: Icons.attach_money,
+
+  // Subscription Categories
+  SubscriptionCategory.Streaming: Icons.tv,
+  SubscriptionCategory.MagazineNewspaper: Icons.chrome_reader_mode,
+  SubscriptionCategory.GymMembership: Icons.fitness_center,
+  SubscriptionCategory.SoftwareOnlineServices: Icons.computer,
+  SubscriptionCategory.Utilities: Icons.lightbulb_outline,
+  SubscriptionCategory.Insurance: Icons.security,
+  SubscriptionCategory.Other: Icons.attach_money,
+};

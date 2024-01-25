@@ -49,9 +49,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           child: exitButton(context),
                         )
                       ]),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       TextFormField(
                         decoration: inputDecor(
                           'Title',

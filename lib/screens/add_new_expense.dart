@@ -1,13 +1,12 @@
-import 'package:coin_sage/assets/icon.dart';
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/models/transaction.dart';
-
+import 'package:coin_sage/assets/icon.dart';
 import 'package:coin_sage/assets/defaults.dart';
+import 'package:coin_sage/models/transaction.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
-
+  final TransactionType type = TransactionType.Expense;
   @override
   State<AddExpenseScreen> createState() {
     return _AddExpenseScreenState();
@@ -15,115 +14,232 @@ class AddExpenseScreen extends StatefulWidget {
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
-  TransactionType selectedtype = TransactionType.Expense;
+  late TransactionType selectedtype;
   late List<DropdownMenuItem> dropdownItems;
-  dynamic _selectedCategory = ExpenseCategory.work;
+  dynamic _selectedCategory;
   DateTime _selectedDate = DateTime.now();
-  String _enteredTitle = '';
+  String? _enteredComment;
   double _enteredAmount = 0;
+  DateTime? _dueDate;
+  TimeOfDay? _reminder;
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    dropdownItems = ExpenseCategory.values
-        .map(
-          (category) => DropdownMenuItem(
-            value: category,
-            child: Row(children: [
-              Icon(categoryIcon[category]),
-              const SizedBox(width: 8),
-              Text(category.name.toUpperCase()),
-            ]),
-          ),
-        )
-        .toList();
-
+    selectedtype = widget.type;
+    dropdownItems = _dropdownItems(selectedtype);
     super.initState();
   }
 
-  void saveExpense() {
+  List<DropdownMenuItem> _dropdownItems(TransactionType type) {
+    if (type == TransactionType.Income) {
+      _selectedCategory = IncomeCategory.Business;
+      return IncomeCategory.values
+          .map(
+            (category) => DropdownMenuItem(
+              value: category,
+              child: Row(
+                children: [
+                  Icon(categoryIcons[category]),
+                  const SizedBox(width: 10),
+                  Text(category.name),
+                ],
+              ),
+            ),
+          )
+          .toList();
+    } else if (type == TransactionType.Subcriptions) {
+      _selectedCategory = SubscriptionCategory.Streaming;
+      return SubscriptionCategory.values
+          .map(
+            (category) => DropdownMenuItem(
+              value: category,
+              child: Row(
+                children: [
+                  Icon(categoryIcons[category]),
+                  const SizedBox(width: 10),
+                  Text(category.name),
+                ],
+              ),
+            ),
+          )
+          .toList();
+    } else if (type == TransactionType.Debt) {
+      _selectedCategory = DebtCategory.Loan;
+      return DebtCategory.values
+          .map(
+            (category) => DropdownMenuItem(
+              value: category,
+              child: Row(
+                children: [
+                  Icon(categoryIcons[category]),
+                  const SizedBox(width: 10),
+                  Text(category.name),
+                ],
+              ),
+            ),
+          )
+          .toList();
+    }
+    _selectedCategory = ExpenseCategory.Groceries;
+    return ExpenseCategory.values
+        .map(
+          (category) => DropdownMenuItem(
+            value: category,
+            child: Row(
+              children: [
+                Icon(categoryIcons[category]),
+                const SizedBox(width: 10),
+                Text(category.name),
+              ],
+            ),
+          ),
+        )
+        .toList();
+  }
+
+  void saveTransaction() {
+    Transaction? newTransaction;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      Navigator.of(context).pop(Transaction(
-        title: _enteredTitle,
-        amount: _enteredAmount,
-        type: selectedtype,
-        category: _selectedCategory,
-        date: _selectedDate,
-      ));
+      if (selectedtype == TransactionType.Expense) {
+        newTransaction = Expense(
+          amount: _enteredAmount,
+          date: _selectedDate,
+          comments: _enteredComment ?? '',
+          category: _selectedCategory,
+        );
+      } else if (selectedtype == TransactionType.Income) {
+        newTransaction = Income(
+          amount: _enteredAmount,
+          date: _selectedDate,
+          comments: _enteredComment ?? '',
+          category: _selectedCategory,
+          isSteady: true,
+        );
+      } else if (selectedtype == TransactionType.Debt) {
+        if (_dueDate != null) {
+          newTransaction = Debt(
+            amount: _enteredAmount,
+            date: _selectedDate,
+            comments: _enteredComment ?? '',
+            category: _selectedCategory,
+            returnDate: _dueDate!,
+            reminderTime: _reminder ?? TimeOfDay.now(),
+          );
+        }
+      } else {
+        if (_dueDate != null) {
+          newTransaction = Subscription(
+            amount: _enteredAmount,
+            date: _selectedDate,
+            comments: _enteredComment ?? '',
+            category: _selectedCategory,
+            dueDate: _dueDate!,
+            reminderTime: _reminder ?? TimeOfDay.now(),
+          );
+        }
+      }
+
+      Navigator.of(context).pop(newTransaction);
     }
   }
 
-  void _currentDatePicker() async {
+  void setReminderPara(TimeOfDay? userReminder) {
+    setState(() {
+      _reminder = userReminder;
+    });
+  }
+
+  // void currentDatePicker() async {
+  //   final now = DateTime.now();
+  //   final firstDate = DateTime(now.year - 1, now.month, now.day);
+  //   final pickedDate = await showDatePicker(
+  //       context: context,
+  //       initialDate: now,
+  //       firstDate: firstDate,
+  //       lastDate: now);
+  //   if (pickedDate == null) return;
+  //   setState(() {
+  //     _selectedDate = pickedDate;
+  //   });
+  // }
+
+  void _dueDatePicker() async {
     final now = DateTime.now();
-    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    final lastDate = DateTime(now.year + 10, now.month, now.day);
     final pickedDate = await showDatePicker(
-        context: context,
-        initialDate: now,
-        firstDate: firstDate,
-        lastDate: now);
+      context: context,
+      initialDate: now,
+      firstDate: now,
+      lastDate: lastDate,
+    );
     if (pickedDate == null) return;
     setState(() {
-      _selectedDate = pickedDate;
+      _dueDate = pickedDate;
     });
+  }
+
+  void setReminder() {
+    showModalBottomSheet(
+      useSafeArea: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => SetReminder(
+        onAddReminder: setReminderPara,
+        currentReminder: _reminder,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (selectedtype == TransactionType.Expense) {
-      _selectedCategory = ExpenseCategory.work;
-      dropdownItems = ExpenseCategory.values
-          .map(
-            (category) => DropdownMenuItem(
-              value: category,
-              child: Row(children: [
-                Icon(categoryIcon[category]),
-                const SizedBox(width: 8),
-                Text(category.name.toUpperCase()),
-              ]),
-            ),
-          )
-          .toList();
-    } else if (selectedtype == TransactionType.Income) {
-      _selectedCategory = IncomeCategory.work;
-      dropdownItems = IncomeCategory.values
-          .map(
-            (category) => DropdownMenuItem(
-              value: category,
-              child: Row(children: [
-                Icon(categoryIcon[category]),
-                const SizedBox(width: 8),
-                Text(category.name.toUpperCase()),
-              ]),
-            ),
-          )
-          .toList();
-    } else if (selectedtype == TransactionType.Debt) {
-      _selectedCategory = TransactionType.Debt;
-      dropdownItems = [
-        DropdownMenuItem(
-          value: TransactionType.Debt,
-          child: Row(children: [
-            Icon(categoryIcon[TransactionType.Debt]),
-            const SizedBox(width: 8),
-            Text(TransactionType.Debt.name.toUpperCase()),
-          ]),
-        ),
-      ];
-    } else {
-      _selectedCategory = TransactionType.Subcriptions;
-      dropdownItems = [
-        DropdownMenuItem(
-          value: TransactionType.Subcriptions,
-          child: Row(children: [
-            Icon(categoryIcon[TransactionType.Subcriptions]),
-            const SizedBox(width: 8),
-            Text(TransactionType.Subcriptions.name.toUpperCase()),
-          ]),
-        ),
-      ];
+    dropdownItems = _dropdownItems(selectedtype);
+    Widget additionalContent = const SizedBox();
+    if (selectedtype == TransactionType.Debt ||
+        selectedtype == TransactionType.Subcriptions) {
+      additionalContent = Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            children: [
+              Text(
+                _dueDate == null
+                    ? selectedtype == TransactionType.Debt
+                        ? 'Pick Return Date'
+                        : 'Pick Due Date'
+                    : dateFormatter.format(_dueDate!),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              IconButton(
+                icon: calenderIcon,
+                onPressed: _dueDatePicker,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Set Remainder',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              IconButton(
+                icon: _reminder != null
+                    ? const Icon(
+                        Icons.notifications,
+                      )
+                    : const Icon(Icons.notification_add_rounded),
+                onPressed: setReminder,
+              ),
+            ],
+          ),
+        ],
+      );
     }
-
     return Scaffold(
       appBar: const Tab(
           child: SizedBox(
@@ -131,170 +247,248 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       )),
       body: Center(
         child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Container(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  Text(
-                    'Add New Transaction',
-                    textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  Container(
-                    //height: 70,
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(vertical: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: iconList.entries.map((entry) {
-                        return Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedtype = entry.key;
-                                });
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                margin: const EdgeInsets.all(20),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: black,
-                                  borderRadius: BorderRadius.circular(30),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: selectedtype == entry.key
-                                          ? Colors.blue
-                                          : Colors.white,
-                                      spreadRadius: 15,
-                                    ),
-                                  ],
-                                ),
-                                child: entry.value,
+          //padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Container(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Text(
+                  'Add New Transaction',
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                //contains the buttons to change the type of transaction.
+                Container(
+                  //height: 70,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: iconList.entries.map((entry) {
+                      return Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _dueDate = null;
+                                _reminder = null;
+                                selectedtype = entry.key;
+                                dropdownItems = _dropdownItems(selectedtype);
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: black,
+                                borderRadius: BorderRadius.circular(30),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: selectedtype == entry.key
+                                        ? Colors.blue
+                                        : Colors.white,
+                                    spreadRadius: 15,
+                                  ),
+                                ],
                               ),
+                              child: entry.value,
                             ),
-                            Text(
-                              entry.key.name,
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                          ),
+                          Text(
+                            entry.key.name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                  TextFormField(
-                    maxLength: 50,
-                    decoration: const InputDecoration(
-                      label: Text('Title'),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty || value.length > 50) {
-                        return 'Must be between 1 and 50 characters.';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _enteredTitle = value!;
-                    },
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          maxLength: 20,
+                ),
+                btwVertical,
+                Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        //amount field
+                        TextFormField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            label: Text('Amount'),
-                            prefix: Text('₹  '),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 15,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            labelText: 'Amount',
+                            prefixIcon: rupeeIcon,
                           ),
                           validator: (value) {
-                            final enteredAmount =
-                                value == null ? 0 : double.tryParse(value);
-                            if (enteredAmount == null || enteredAmount <= 0) {
-                              return 'Must be valid amount';
+                            double? amount = double.tryParse(value!);
+                            if (amount == null && amount! <= 0) {
+                              return 'Invalid amount';
                             }
                             return null;
                           },
                           onSaved: (value) {
-                            _enteredAmount = double.tryParse(value!)!;
+                            var amount = double.tryParse(value!);
+                            _enteredAmount = amount!;
                           },
                         ),
-                      ),
-                      Expanded(
-                        child: Row(
+
+                        btwVertical,
+
+                        //category list
+                        DropdownButtonFormField(
+                          hint: const Text('Select a category'),
+                          value: _selectedCategory,
+                          items: dropdownItems,
+                          onChanged: (category) {},
+                        ),
+                        btwVertical,
+                        additionalContent,
+                        btwVertical,
+                        //comments field
+                        TextFormField(
+                            maxLines: 2,
+                            minLines: 1,
+                            decoration: inputDecor(
+                                'Comments',
+                                const Icon(Icons.add_comment),
+                                null,
+                                'Add some thoughts of yours'),
+                            onSaved: (value) {
+                              _enteredComment = value;
+                            }),
+                        btwVertical,
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              formatter.format(_selectedDate),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge!
-                                  .copyWith(
-                                    fontSize: 20,
-                                  ),
+                            ElevatedButton(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
-                            IconButton(
-                              onPressed: _currentDatePicker,
-                              icon: const Icon(
-                                Icons.calendar_month,
-                                size: 34,
-                              ),
+                            TextButton(
+                              onPressed: saveTransaction,
+                              child: const Text('Add'),
                             ),
                           ],
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  SizedBox(
-                    width: double.infinity,
-                    child: DropdownButtonFormField(
-                      value: _selectedCategory,
-                      onChanged: (val) {
-                        if (val == null) return;
-                        _selectedCategory = val;
-                      },
-                      dropdownColor: Theme.of(context).colorScheme.onPrimary,
-                      items: dropdownItems,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  //const Spacer(),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      TextButton(
-                        onPressed: saveExpense,
-                        child: const Text(
-                          'Done',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                    ],
-                  ),
-                ],
-              ),
+                        )
+                      ],
+                    )),
+              ],
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class SetReminder extends StatefulWidget {
+  SetReminder(
+      {super.key, required this.onAddReminder, required this.currentReminder});
+
+  final void Function(TimeOfDay?) onAddReminder;
+  TimeOfDay? currentReminder;
+  @override
+  State<SetReminder> createState() {
+    return _SetReminderState();
+  }
+}
+
+class _SetReminderState extends State<SetReminder> {
+  TimeOfDay? _selectedTime;
+  void _timePicker() async {
+    final selectedTime = await showTimePicker(
+      initialTime: TimeOfDay.now(),
+      context: context,
+    );
+
+    if (selectedTime == null) return;
+
+    setState(() {
+      _selectedTime = selectedTime;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(widget.currentReminder);
+    if (_selectedTime == null) {
+      setState(() {
+        _selectedTime == widget.currentReminder;
+      });
+    }
+    return LayoutBuilder(builder: (context, constraints) {
+      return SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Set your Reminder',
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Colors.white,
+                        ),
+                  ),
+                  const Spacer(),
+                  exitButton(context),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: dePadding,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    width: 2,
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      iconSize: 40,
+                      icon: const Icon(Icons.timer_rounded),
+                      onPressed: _timePicker,
+                      padding: const EdgeInsets.only(right: 20),
+                    ),
+                    Text(
+                      _selectedTime != null
+                          ? _selectedTime!.format(context)
+                          : widget.currentReminder != null
+                              ? widget.currentReminder!.format(context)
+                              : 'Set Timings',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: () {
+                  widget.onAddReminder(_selectedTime);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Add Reminder'),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
