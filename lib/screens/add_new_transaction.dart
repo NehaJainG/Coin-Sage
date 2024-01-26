@@ -4,20 +4,20 @@ import 'package:coin_sage/assets/icon.dart';
 import 'package:coin_sage/assets/defaults.dart';
 import 'package:coin_sage/models/transaction.dart';
 
-class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+class AddTransactionScreen extends StatefulWidget {
+  const AddTransactionScreen({super.key});
   final TransactionType type = TransactionType.Expense;
   @override
-  State<AddExpenseScreen> createState() {
-    return _AddExpenseScreenState();
+  State<AddTransactionScreen> createState() {
+    return _AddTransactionScreenState();
   }
 }
 
-class _AddExpenseScreenState extends State<AddExpenseScreen> {
+class _AddTransactionScreenState extends State<AddTransactionScreen> {
   late TransactionType selectedtype;
   late List<DropdownMenuItem> dropdownItems;
   dynamic _selectedCategory;
-  DateTime _selectedDate = DateTime.now();
+  final DateTime _selectedDate = DateTime.now();
   String? _enteredComment;
   double _enteredAmount = 0;
   DateTime? _dueDate;
@@ -141,7 +141,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         }
       }
 
-      Navigator.of(context).pop(newTransaction);
+      Navigator.of(context).pop<Transaction>(newTransaction);
     }
   }
 

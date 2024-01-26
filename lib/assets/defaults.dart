@@ -36,6 +36,8 @@ FloatingActionButton exitButton(BuildContext context) => FloatingActionButton(
 //colors:
 Color black = const Color.fromARGB(255, 33, 33, 47);
 Color blue = const Color.fromARGB(255, 56, 114, 255);
+Color green = const Color.fromARGB(255, 75, 229, 80);
+Color red = const Color.fromARGB(255, 241, 88, 77);
 
 Widget btwVertical = const SizedBox(height: 10);
 EdgeInsetsGeometry dePadding = const EdgeInsets.all(10);

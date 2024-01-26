@@ -1,7 +1,7 @@
 import 'package:coin_sage/models/transaction.dart';
 import 'package:flutter/material.dart';
 
-final List<Transaction> expenseData = [
+final List<Transaction> transactionData = [
   Expense(
     amount: 50.0,
     date: DateTime.now().subtract(Duration(days: 5)),
@@ -24,7 +24,6 @@ final List<Transaction> expenseData = [
     reminderTime: TimeOfDay.now(),
   ),
   Subscription(
-    id: 'ID4',
     amount: 15.0,
     date: DateTime.now().subtract(Duration(days: 20)),
     comments: 'Monthly streaming subscription',

@@ -21,7 +21,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         //backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
 
         return SizedBox(
-          height: double.infinity,
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.fromLTRB(20.0, 40, 20, keyboardSpace + 20),

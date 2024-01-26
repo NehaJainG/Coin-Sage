@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/widgets/grid_buttons.dart';
 import 'package:coin_sage/screens/add_new_room.dart';
+import 'package:coin_sage/screens/add_new_transaction.dart';
+import 'package:coin_sage/screens/user_rooms.dart';
+import 'package:coin_sage/widgets/transaction_list.dart';
+import 'package:coin_sage/widgets/quick_buttons.dart';
+import 'package:coin_sage/widgets/statistics.dart';
 import 'package:coin_sage/models/transaction.dart';
-import 'package:coin_sage/screens/add_new_expense.dart';
 import 'package:coin_sage/assets/icon.dart';
+
+import 'package:coin_sage/data/expense_list.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -24,10 +29,10 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _addNewExpense(TransactionType newType) {
-    Navigator.of(context).push(
+  void _addNewTransaction() async {
+    final newTransaction = await Navigator.of(context).push<Transaction>(
       MaterialPageRoute(
-        builder: (context) => AddExpenseScreen(),
+        builder: (context) => const AddTransactionScreen(),
       ),
     );
   }
@@ -37,7 +42,15 @@ class _HomePageState extends State<HomePage> {
       isScrollControlled: true,
       context: context,
       useSafeArea: true,
-      builder: (ctx) => AddRoomScreen(),
+      builder: (ctx) => const AddRoomScreen(),
+    );
+  }
+
+  void _viewRooms() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => UserRoomsScreen(),
+      ),
     );
   }
 
@@ -50,18 +63,19 @@ class _HomePageState extends State<HomePage> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GridButtons(
-                addNewExpense: _addNewExpense,
-                addNewRoom: _addNewRoom,
-              ),
-
-              // Expanded(
-              //     child: TransactionList(userTransaction: userTransaction)),
-              const SizedBox(height: 20),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                QuickButtons(
+                  newTransaction: _addNewTransaction,
+                  newRoom: _addNewRoom,
+                  allRooms: _viewRooms,
+                ),
+                const SizedBox(height: 15),
+                TransactionStatistics(),
+                const SizedBox(height: 15),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
