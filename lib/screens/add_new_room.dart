@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:coin_sage/assets/icon.dart';
 import 'package:coin_sage/assets/defaults.dart';
+import 'package:coin_sage/data/room_list.dart';
+import 'package:coin_sage/models/user.dart';
 
 class AddRoomScreen extends StatefulWidget {
   const AddRoomScreen({super.key});
@@ -11,7 +13,44 @@ class AddRoomScreen extends StatefulWidget {
 }
 
 class _AddRoomScreenState extends State<AddRoomScreen> {
-  List<String>? members;
+  final _memberController = TextEditingController();
+  List<User> members = [user1];
+  String _enteredTitle = '';
+  String _enteredMember = '';
+
+  void memberSearch() {
+    if (_memberController.text.isNotEmpty ||
+        _memberController.text.length < 21) {
+      print(_memberController.text);
+      User? newMember = users.map(
+        (user) {
+          if (user.name == _memberController.text) {
+            print(_memberController.text);
+
+            return user;
+          }
+        },
+      ).firstOrNull;
+      if (newMember == null) {
+        showSnackBar('No such user found. Try with other name.');
+        return;
+      }
+      setState(() {
+        members.add(newMember);
+      });
+    }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 5),
+        content: Text(message),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
@@ -50,32 +89,40 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       ]),
                       const SizedBox(height: 10),
                       TextFormField(
-                        decoration: inputDecor(
-                          'Title',
-                          roomTitle,
-                          null,
-                          null,
-                        ),
-                      ),
+                          decoration: inputDecor(
+                            'Title',
+                            roomTitle,
+                            null,
+                            null,
+                          ),
+                          validator: (value) {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value.length < 20) {
+                              return 'Must be between 1 and 20 characters';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            _enteredTitle = value!;
+                          }),
                       const SizedBox(height: 20),
                       Row(
                         children: [
                           Expanded(
                             child: TextFormField(
+                              controller: _memberController,
                               decoration: inputDecor(
                                 'Member',
                                 addMemberIcon,
                                 null,
-                                'Enter member\'s id',
+                                'Enter member\'s name',
                               ),
                             ),
                           ),
                           //const SizedBox(width: 10),
                           IconButton(
-                            onPressed: () {
-                              // Add your onPressed code here!
-                            },
-                            //label: const Text('Add a member'),
+                            onPressed: memberSearch,
                             icon: searchMemberIcon,
                           ),
                         ],
@@ -91,13 +138,16 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                   .onPrimaryContainer),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: members == null
+                        child: members.length == 1
                             ? const Text(
                                 'No members added yet',
                               )
                             : Column(
                                 children: [
-                                  for (String name in members!) Text(name)
+                                  for (int index = 1;
+                                      index < members.length;
+                                      index++)
+                                    Text(members[index].name)
                                 ],
                               ),
                       ),

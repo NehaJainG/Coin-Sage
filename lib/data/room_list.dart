@@ -5,11 +5,13 @@ User user1 = User(id: '1', name: 'Alice');
 User user2 = User(id: '2', name: 'Bob');
 User user3 = User(id: '3', name: 'Charlie');
 
+List<User> users = [user1, user2, user3];
+
 List<Room> dummyRooms = [
   Room(
     id: 'room1',
     title: 'Home',
-    members: [user1, user2],
+    members: [user1, user2, user3, user2],
   ),
   Room(
     id: 'room2',

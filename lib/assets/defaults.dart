@@ -38,13 +38,14 @@ Color black = const Color.fromARGB(255, 33, 33, 47);
 Color blue = const Color.fromARGB(255, 56, 114, 255);
 Color green = const Color.fromARGB(255, 75, 229, 80);
 Color red = const Color.fromARGB(255, 251, 100, 100);
+Color lightGrey = const Color.fromARGB(255, 238, 237, 235);
 //light colors
 Color orange = const Color.fromARGB(255, 255, 152, 67);
 Color yellow = const Color.fromARGB(255, 253, 231, 103);
 Color lightBlue = const Color.fromARGB(255, 104, 149, 210);
 Color peach = const Color.fromARGB(255, 255, 155, 155);
 Color skinColor = const Color.fromRGBO(255, 214, 165, 1);
-Color lightGreen = const Color.fromARGB(255, 203, 255, 169);
+Color bgIcon = const Color.fromARGB(170, 180, 180, 179);
 //dark colors
 Color maroon = const Color.fromARGB(255, 117, 14, 33);
 Color purple = const Color.fromARGB(255, 126, 37, 83);
