@@ -418,10 +418,9 @@ class _SetReminderState extends State<SetReminder> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.currentReminder);
     if (_selectedTime == null) {
       setState(() {
-        _selectedTime == widget.currentReminder;
+        _selectedTime = widget.currentReminder;
       });
     }
     return LayoutBuilder(builder: (context, constraints) {
@@ -480,6 +479,7 @@ class _SetReminderState extends State<SetReminder> {
               const SizedBox(height: 20),
               OutlinedButton(
                 onPressed: () {
+                  print(_selectedTime);
                   widget.onAddReminder(_selectedTime);
                   Navigator.of(context).pop();
                 },

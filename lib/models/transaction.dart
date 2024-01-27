@@ -36,16 +36,17 @@ enum IncomeCategory {
 
 enum DebtCategory {
   Loan,
-  FamilyFriend,
+  Family,
+  Friend,
   CreditCard,
   Other,
 }
 
 enum SubscriptionCategory {
   Streaming,
-  MagazineNewspaper,
+  Magazine,
   GymMembership,
-  SoftwareOnlineServices,
+  OnlineServices,
   Utilities,
   Insurance,
   Other,
@@ -65,6 +66,9 @@ class Transaction {
     required this.type,
     required this.category,
   });
+  String get categoryName {
+    return category.toString().split('.')[1];
+  }
 }
 
 class Expense extends Transaction {
@@ -80,6 +84,11 @@ class Expense extends Transaction {
           type: TransactionType.Expense,
           category: category,
         );
+
+  @override
+  String get categoryName {
+    return category.toString().split('.')[1];
+  }
 }
 
 class Income extends Transaction {
@@ -98,6 +107,11 @@ class Income extends Transaction {
           type: TransactionType.Income,
           category: category,
         );
+
+  @override
+  String get categoryName {
+    return category.toString().split('.')[1];
+  }
 }
 
 class Debt extends Transaction {
@@ -118,6 +132,11 @@ class Debt extends Transaction {
           type: TransactionType.Debt,
           category: category,
         );
+
+  @override
+  String get categoryName {
+    return category.toString().split('.')[1];
+  }
 }
 
 class Subscription extends Transaction {
@@ -138,4 +157,9 @@ class Subscription extends Transaction {
           type: TransactionType.Subcriptions,
           category: category,
         );
+
+  @override
+  String get categoryName {
+    return category.toString().split('.')[1];
+  }
 }

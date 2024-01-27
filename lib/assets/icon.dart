@@ -53,15 +53,16 @@ const categoryIcons = {
 
   // Debt Categories
   DebtCategory.Loan: Icons.attach_money,
-  DebtCategory.FamilyFriend: Icons.people,
+  DebtCategory.Family: Icons.house_rounded,
+  DebtCategory.Friend: Icons.people,
   DebtCategory.CreditCard: Icons.credit_card,
   DebtCategory.Other: Icons.attach_money,
 
   // Subscription Categories
   SubscriptionCategory.Streaming: Icons.tv,
-  SubscriptionCategory.MagazineNewspaper: Icons.chrome_reader_mode,
+  SubscriptionCategory.Magazine: Icons.chrome_reader_mode,
   SubscriptionCategory.GymMembership: Icons.fitness_center,
-  SubscriptionCategory.SoftwareOnlineServices: Icons.computer,
+  SubscriptionCategory.OnlineServices: Icons.computer,
   SubscriptionCategory.Utilities: Icons.lightbulb_outline,
   SubscriptionCategory.Insurance: Icons.security,
   SubscriptionCategory.Other: Icons.attach_money,

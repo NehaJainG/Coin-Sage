@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+
 import 'package:coin_sage/assets/defaults.dart';
 
 class TransactionStatistics extends StatefulWidget {
@@ -12,25 +12,34 @@ class TransactionStatistics extends StatefulWidget {
 }
 
 class _TransactionStatisticsState extends State<TransactionStatistics> {
+  TooltipBehavior? _tooltipBehavior;
   Map<String, double> data = {
     'Income': 4000,
     'Spending': 2000,
   };
+
+  @override
+  void initState() {
+    _tooltipBehavior = TooltipBehavior(enable: true, format: 'point.x');
+    super.initState();
+  }
+
   List<ChartData> chartData = [
     ChartData(category: 'Food', amount: 1000),
-    ChartData(category: 'personal care', amount: 200),
+    ChartData(category: 'personal care', amount: 2100),
     ChartData(category: 'vacation', amount: 1200),
+    ChartData(category: 'Foods', amount: 1800),
   ];
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      padding: EdgeInsets.fromLTRB(10, 010, 10, 10),
       decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomRight,
             end: Alignment.topLeft,
             colors: [
-              black.withOpacity(0.7),
+              black.withOpacity(0.9),
               black.withOpacity(0.4),
             ],
           ),
@@ -39,7 +48,7 @@ class _TransactionStatisticsState extends State<TransactionStatistics> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total Balance: ₹9000',
+            'Total Balance: ₹ 9000',
             textAlign: TextAlign.left,
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
                   fontWeight: FontWeight.w600,
@@ -52,8 +61,8 @@ class _TransactionStatisticsState extends State<TransactionStatistics> {
               return Container(
                 margin: const EdgeInsets.all(5),
                 padding: const EdgeInsets.all(10),
-                width: 165,
-                height: 110,
+                width: 160,
+                height: 90,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
@@ -93,27 +102,36 @@ class _TransactionStatisticsState extends State<TransactionStatistics> {
               );
             }).toList(),
           ),
-          Container(
+          SizedBox(
+            height: 250,
             child: SfCircularChart(
-              title: ChartTitle(text: 'Title'),
+              tooltipBehavior: _tooltipBehavior,
               series: <CircularSeries>[
                 // Renders radial bar chart
-
                 RadialBarSeries<ChartData, String>(
-                    dataSource: chartData,
-                    gap: '10%',
-                    trackColor: Colors.white70,
-                    //trackOpacity: 0.5,
-                    opacity: 0.9,
-                    //sortingOrder: SortingOrder.ascending,
-                    cornerStyle: CornerStyle.bothCurve,
-                    xValueMapper: (ChartData data, _) => data.x,
-                    yValueMapper: (ChartData data, _) => data.y),
+                  dataSource: chartData,
+                  gap: '5%',
+                  trackOpacity: 0.5,
+                  radius: '100%',
+                  //innerRadius: '60%',
+                  maximumValue: 2200,
+
+                  //sortingOrder: SortingOrder.ascending,
+                  cornerStyle: CornerStyle.bothCurve,
+                  xValueMapper: (ChartData data, _) => data.x,
+                  yValueMapper: (ChartData data, _) => data.y,
+                  pointColorMapper: (ChartData data, index) =>
+                      colorPalette[index % colorPalette.length],
+                ),
               ],
-              legend: Legend(
+              legend: const Legend(
                 isVisible: true,
-                //padding: 2,
                 itemPadding: 10,
+                position: LegendPosition.bottom,
+                alignment: ChartAlignment.near,
+                iconHeight: 20,
+                iconWidth: 20,
+                overflowMode: LegendItemOverflowMode.scroll,
               ),
             ),
           ),
@@ -131,4 +149,5 @@ class ChartData {
 
   String get x => category;
   double get y => amount;
+  String get label => x;
 }
