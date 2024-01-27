@@ -389,6 +389,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   }
 }
 
+// ignore: must_be_immutable
 class SetReminder extends StatefulWidget {
   SetReminder(
       {super.key, required this.onAddReminder, required this.currentReminder});
@@ -427,7 +428,7 @@ class _SetReminderState extends State<SetReminder> {
       return SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,

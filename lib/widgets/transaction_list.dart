@@ -14,6 +14,33 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget transactionList = SliverToBoxAdapter(
+      child: Center(
+        child: Text(
+          'No transactions found:)',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
+    );
+    if (userTransactions.isNotEmpty) {
+      transactionList = SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Display 2 items in a row
+          crossAxisSpacing: 10,
+
+          childAspectRatio: 6 / 4,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            return TransactionItem(
+              transaction: userTransactions[index],
+              index: index,
+            );
+          },
+          childCount: userTransactions.length,
+        ),
+      );
+    }
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
@@ -44,23 +71,7 @@ class TransactionList extends StatelessWidget {
             maxHeight: 50.0,
           ),
         ),
-        SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Display 2 items in a row
-            crossAxisSpacing: 10,
-
-            childAspectRatio: 6 / 4,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-              return TransactionItem(
-                transaction: userTransactions[index],
-                index: index,
-              );
-            },
-            childCount: userTransactions.length,
-          ),
-        ),
+        transactionList,
       ],
     );
   }

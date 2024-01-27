@@ -4,6 +4,7 @@ import 'package:coin_sage/data/room_list.dart';
 import 'package:coin_sage/assets/icon.dart';
 import 'package:coin_sage/assets/defaults.dart';
 import 'package:coin_sage/models/room.dart';
+import 'package:coin_sage/models/user.dart';
 import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/room_detail.dart';
 
@@ -14,9 +15,12 @@ class UserRoomsScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Your Rooms'), actions: [
         IconButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AddRoomScreen(),
-            ));
+            showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              useSafeArea: true,
+              builder: (ctx) => const AddRoomScreen(),
+            );
           },
           icon: addIcon,
         )
@@ -25,8 +29,11 @@ class UserRoomsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            for (Room roomItem in dummyRooms) RoomCard(room: roomItem),
-            for (Room roomItem in dummyRooms) RoomCard(room: roomItem)
+            for (int index = 0; index < dummyRooms.length; index++)
+              RoomCard(
+                index: index % darkcolorPalette.length,
+                room: dummyRooms[index],
+              )
           ],
         ),
       ),
@@ -35,9 +42,14 @@ class UserRoomsScreen extends StatelessWidget {
 }
 
 class RoomCard extends StatelessWidget {
-  const RoomCard({super.key, required this.room});
+  const RoomCard({
+    super.key,
+    required this.room,
+    required this.index,
+  });
 
   final Room room;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +62,10 @@ class RoomCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 10,
+        ),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
@@ -65,18 +80,21 @@ class RoomCard extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 20,
+              ),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(10),
                 ),
-                color: blue,
+                color: darkcolorPalette[index],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //Text('date'),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     room.title,
                     maxLines: 2,
@@ -88,23 +106,60 @@ class RoomCard extends StatelessWidget {
               ),
             ),
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(
-                top: 50,
-                bottom: 20,
-                left: 20,
-                right: 20,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(
-                  bottom: Radius.circular(10),
+                width: double.infinity,
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  bottom: 20,
+                  left: 20,
+                  right: 20,
                 ),
-                color: black,
-              ),
-              child: Text(
-                'room.members',
-              ),
-            ),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(10),
+                  ),
+                  color: black,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Amount'),
+                    Text(
+                      'Members:',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        for (User member in room.members)
+                          Container(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.account_circle,
+                                  size: 30,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  member.name,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge!
+                                      .copyWith(
+                                        fontSize: 18,
+                                      ),
+                                )
+                              ],
+                            ),
+                          )
+                      ],
+                    ),
+                  ],
+                )),
           ],
         ),
       ),
