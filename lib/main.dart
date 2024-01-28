@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/screens/home_page.dart';
-import 'package:coin_sage/assets/defaults.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'package:coin_sage/authentication/screens/login.dart';
+import 'package:coin_sage/defaults/defaults.dart';
+//import 'package:google_fonts/google_fonts.dart';
 
 final customisedTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.dark,
     seedColor: blue,
-    // primary: Color.fromARGB(255, 12, 6, 41),
-    // onPrimary: Color.fromARGB(255, 215, 208, 208),
   ),
+  //textTheme: GoogleFonts.poppinsTextTheme(),
 );
 
-void main() {
+void main() async {
+  await WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -25,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: customisedTheme,
-      home: HomePage(),
+      home: LoginScreen(),
     );
   }
 }

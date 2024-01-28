@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import 'package:coin_sage/assets/defaults.dart';
+import 'package:coin_sage/defaults/defaults.dart';
 
 class TransactionStatistics extends StatefulWidget {
   const TransactionStatistics({super.key});

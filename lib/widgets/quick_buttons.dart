@@ -1,4 +1,4 @@
-import 'package:coin_sage/assets/defaults.dart';
+import 'package:coin_sage/defaults/defaults.dart';
 import 'package:flutter/material.dart';
 
 class QuickButtons extends StatelessWidget {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
+
 import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/add_new_transaction.dart';
 import 'package:coin_sage/screens/user_rooms.dart';
@@ -7,7 +10,7 @@ import 'package:coin_sage/widgets/quick_buttons.dart';
 import 'package:coin_sage/widgets/statistics.dart';
 import 'package:coin_sage/widgets/transaction_list.dart';
 import 'package:coin_sage/models/transaction.dart';
-import 'package:coin_sage/assets/icon.dart';
+import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/data/expense_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,8 +21,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  cloud.FirebaseFirestore? db;
   int _selectedPage = 0;
   final List<Transaction> userTransaction = transactionData;
+
+  void login(String emailAddress, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: emailAddress, password: password);
+      print('made it');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    login('nehajaing1324', 'neha12');
+    super.initState();
+  }
+
+  void loadDB() {
+    db = cloud.FirebaseFirestore.instance;
+  }
 
   void _selectPage(int currentPageIndex) {
     //body

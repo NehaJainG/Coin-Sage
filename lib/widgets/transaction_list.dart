@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/models/transaction.dart';
-import 'package:coin_sage/assets/defaults.dart';
+import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/widgets/transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
