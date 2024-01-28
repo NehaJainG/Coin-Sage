@@ -36,17 +36,36 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   intl: ^0.19.0
+  flutter_riverpod: ^2.4.9
+  syncfusion_flutter_charts: ^24.1.47+2
+  firebase_auth: ^4.16.0
+  flutter_lints: ^3.0.1
+  cloud_firestore: ^4.14.0
+  firebase_core: ^2.24.2
+  google_fonts: ^6.1.0
+  flutter_native_splash: ^2.3.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_native_splash:
+  color: "#f7f6f1"
+  image: assets/image/splash_image.png
+  color_dark: "#f272727"
+  image_dark: assets/image/splash_image.png
+  
+  android_12:
+    image: assets/image/splash_image.png
+    icon_background_color: "#f7f6f1"
+    image_dark: assets/image/splash_image.png
+    icon_background_color_dark: "#f272727"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
