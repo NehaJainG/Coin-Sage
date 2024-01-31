@@ -1,24 +1,40 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:coin_sage/firebase_options.dart';
 
-import 'package:coin_sage/authentication/screens/login.dart';
-import 'package:coin_sage/defaults/defaults.dart';
+//import 'package:coin_sage/authentication/screens/login.dart';
+import 'package:coin_sage/screens/home_page.dart';
+import 'package:coin_sage/defaults/colors.dart';
 //import 'package:google_fonts/google_fonts.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final customisedTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
-    brightness: Brightness.dark,
-    seedColor: blue,
+    brightness: Brightness.light,
+    seedColor: herodarkBlue,
   ),
+
+  //textTheme: GoogleFonts.poppinsTextTheme(),
+);
+final darkTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    brightness: Brightness.dark,
+    seedColor: herodarkBlue,
+  ),
+
   //textTheme: GoogleFonts.poppinsTextTheme(),
 );
 
-void main() async {
+Future main() async {
   await WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
-  runApp(const MyApp());
+  Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -27,9 +43,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Your CoinSage',
       theme: customisedTheme,
-      home: LoginScreen(),
+      darkTheme: darkTheme,
+      home: HomePage(),
+      // LoginScreen(),
     );
   }
 }

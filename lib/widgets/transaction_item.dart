@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/defaults/defaults.dart';
+import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/models/transaction.dart';
 
@@ -20,7 +20,10 @@ class TransactionItem extends StatefulWidget {
 }
 
 class _TransactionItemState extends State<TransactionItem> {
-  int get index => widget.index % darkcolorPalette.length;
+  static ColorProvider colors = ColorProvider();
+
+  int get index => widget.index % colors.colorPalette.length;
+
   @override
   Widget build(BuildContext context) {
     Transaction transaction = widget.transaction;
@@ -35,14 +38,14 @@ class _TransactionItemState extends State<TransactionItem> {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: darkcolorPalette[index], width: 3),
-        color: darkcolorPalette[index],
+        border: Border.all(color: colors.colorPalette[index], width: 3),
+        color: colors.colorPalette[index],
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            darkcolorPalette[index].withOpacity(0.4),
-            darkcolorPalette[index].withOpacity(0.6),
+            colors.colorPalette[index].withOpacity(0.4),
+            colors.colorPalette[index].withOpacity(0.6),
           ],
         ),
       ),
@@ -67,7 +70,7 @@ class _TransactionItemState extends State<TransactionItem> {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontSize: 22,
-                      color: Colors.white,
+                      color: colors.widgetColors['text'],
                     ),
               ),
               Text(

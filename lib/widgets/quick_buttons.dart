@@ -1,5 +1,6 @@
-import 'package:coin_sage/defaults/defaults.dart';
 import 'package:flutter/material.dart';
+
+import 'package:coin_sage/defaults/colors.dart';
 
 class QuickButtons extends StatelessWidget {
   QuickButtons({
@@ -7,17 +8,19 @@ class QuickButtons extends StatelessWidget {
     required this.newTransaction,
     required this.newRoom,
     required this.allRooms,
+    required this.viewRequest,
   });
 
   //void  sample () {}
   final void Function() newTransaction;
   final void Function() newRoom;
   final void Function() allRooms;
+  final void Function() viewRequest;
   final items = {
     'Transaction': const Icon(Icons.add),
     'Add Room': const Icon(Icons.group_add_rounded),
     'View Rooms': const Icon(Icons.groups),
-    'View Room': const Icon(Icons.groups),
+    'Requests': const Icon(Icons.meeting_room_rounded),
   };
 
   @override
@@ -32,16 +35,17 @@ class QuickButtons extends StatelessWidget {
               margin: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: black,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: const [
+                borderRadius: BorderRadius.circular(34),
+                boxShadow: [
                   BoxShadow(
-                    color: Colors.blue,
-                    spreadRadius: 10,
+                    color: herodarkBlue,
+                    spreadRadius: 8,
                   ),
                 ],
               ),
               child: IconButton(
                 icon: entry.value,
+                color: Colors.white,
                 onPressed: () {
                   if (entry.key == 'Transaction') {
                     newTransaction();
@@ -49,6 +53,8 @@ class QuickButtons extends StatelessWidget {
                     newRoom();
                   } else if (entry.key == 'View Rooms') {
                     allRooms();
+                  } else if (entry.key == 'Requests') {
+                    viewRequest();
                   }
                 },
               ),

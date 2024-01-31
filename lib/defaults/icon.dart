@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:coin_sage/models/transaction.dart';
 
+//common icon:
+Icon refreshIcon = const Icon(Icons.refresh);
+
 //add new room icons
 Icon addIcon = const Icon(Icons.add);
 Icon addMemberIcon = const Icon(Icons.person_add_alt_1_rounded);
@@ -10,17 +13,10 @@ Icon searchMemberIcon = const Icon(Icons.person_search_rounded);
 Icon person = const Icon(Icons.person);
 Icon email = const Icon(Icons.email_rounded);
 Icon password = const Icon(Icons.key_rounded);
-//add new Expense icons
+
+//add new transaction icons
 Icon rupeeIcon = const Icon(Icons.currency_rupee_rounded);
 Icon calenderIcon = const Icon(Icons.calendar_month_rounded);
-
-//Transaction type icon
-Map<TransactionType, Icon> iconList = {
-  TransactionType.Expense: Icon(Icons.call_made_rounded),
-  TransactionType.Income: Icon(Icons.call_received_rounded),
-  TransactionType.Debt: Icon(Icons.currency_exchange_rounded),
-  TransactionType.Subcriptions: Icon(Icons.description_outlined)
-};
 
 //add bottom navigation
 Icon homeIcon = const Icon(Icons.home_outlined);
@@ -32,6 +28,13 @@ Icon statisticActive = const Icon(Icons.bar_chart_rounded);
 Icon chatActive = const Icon(Icons.chat_bubble_rounded);
 Icon settingActive = const Icon(Icons.settings);
 
+//Transaction type icon
+Map<TransactionType, Icon> iconList = {
+  TransactionType.Expense: Icon(Icons.call_made_rounded),
+  TransactionType.Income: Icon(Icons.call_received_rounded),
+  TransactionType.Debt: Icon(Icons.currency_exchange_rounded),
+  TransactionType.Subcriptions: Icon(Icons.description_outlined)
+};
 //icons for categories:
 // Map to associate icons with each category
 const categoryIcons = {

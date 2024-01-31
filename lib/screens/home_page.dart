@@ -1,11 +1,13 @@
+import 'package:coin_sage/defaults/colors.dart';
 import 'package:flutter/material.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
+//import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
 
 import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/add_new_transaction.dart';
 import 'package:coin_sage/screens/user_rooms.dart';
+import 'package:coin_sage/screens/requests.dart';
 import 'package:coin_sage/widgets/quick_buttons.dart';
 import 'package:coin_sage/widgets/statistics.dart';
 import 'package:coin_sage/widgets/transaction_list.dart';
@@ -21,33 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  cloud.FirebaseFirestore? db;
   int _selectedPage = 0;
   final List<Transaction> userTransaction = transactionData;
-
-  void login(String emailAddress, String password) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
-      print('made it');
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    login('nehajaing1324', 'neha12');
-    super.initState();
-  }
-
-  void loadDB() {
-    db = cloud.FirebaseFirestore.instance;
-  }
 
   void _selectPage(int currentPageIndex) {
     //body
@@ -85,20 +62,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _viewRequests() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => RequestScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget fixedContent = Column(
-      children: [
-        QuickButtons(
-          newTransaction: _addNewTransaction,
-          newRoom: _addNewRoom,
-          allRooms: _viewRooms,
-        ),
-        const Divider(),
-        const SizedBox(height: 5),
-        const TransactionStatistics(),
-        const SizedBox(height: 15),
-      ],
+    Widget fixedContent = Container(
+      child: Column(
+        children: [
+          QuickButtons(
+            newTransaction: _addNewTransaction,
+            newRoom: _addNewRoom,
+            allRooms: _viewRooms,
+            viewRequest: _viewRequests,
+          ),
+          const SizedBox(height: 15),
+          const TransactionStatistics(),
+          const SizedBox(height: 30),
+          const Divider(
+            color: Colors.white,
+            endIndent: 160,
+            indent: 160,
+            thickness: 3,
+          )
+        ],
+      ),
     );
 
     return Scaffold(
@@ -106,6 +97,7 @@ class _HomePageState extends State<HomePage> {
         drawer: const Drawer(),
         appBar: AppBar(
           title: const Text('Heyy Neha!'),
+          backgroundColor: blackBlue,
         ),
         body: TransactionList(
           userTransactions: userTransaction,
@@ -121,24 +113,13 @@ class _HomePageState extends State<HomePage> {
           items: [
             BottomNavigationBarItem(
               //tooltip: 'home',
-              label: '.',
+              label: 'Home',
               icon: homeIcon,
               activeIcon: homeActive,
             ),
             BottomNavigationBarItem(
-              label: '.',
-              icon: statistic,
-              activeIcon: statisticActive,
-            ),
-            BottomNavigationBarItem(
-              label: '.',
-              icon: chat,
-              activeIcon: chatActive,
-            ),
-            BottomNavigationBarItem(
-              label: '.',
-              icon: setting,
-              activeIcon: settingActive,
+              label: 'Accout',
+              icon: settingActive,
             ),
           ],
         ));

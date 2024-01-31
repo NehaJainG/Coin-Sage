@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:coin_sage/data/room_list.dart';
 import 'package:coin_sage/defaults/icon.dart';
-import 'package:coin_sage/defaults/defaults.dart';
-import 'package:coin_sage/models/room.dart';
-import 'package:coin_sage/models/user.dart';
+import 'package:coin_sage/defaults/colors.dart';
+
 import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/room_detail.dart';
 

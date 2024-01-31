@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:syncfusion_flutter_charts/charts.dart';
-
 import 'package:coin_sage/defaults/defaults.dart';
+import 'package:coin_sage/defaults/colors.dart';
 
 class TransactionStatistics extends StatefulWidget {
   const TransactionStatistics({super.key});
@@ -12,35 +11,26 @@ class TransactionStatistics extends StatefulWidget {
 }
 
 class _TransactionStatisticsState extends State<TransactionStatistics> {
-  TooltipBehavior? _tooltipBehavior;
+  ColorProvider colors = ColorProvider();
   Map<String, double> data = {
     'Income': 4000,
     'Spending': 2000,
   };
 
-  @override
-  void initState() {
-    _tooltipBehavior = TooltipBehavior(enable: true, format: 'point.x');
-    super.initState();
-  }
+  List<Color>? colorPalette;
 
-  List<ChartData> chartData = [
-    ChartData(category: 'Food', amount: 1000),
-    ChartData(category: 'personal care', amount: 2100),
-    ChartData(category: 'vacation', amount: 1200),
-    ChartData(category: 'Foods', amount: 1800),
-  ];
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(10, 010, 10, 10),
+      margin: EdgeInsets.all(12),
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
       decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomRight,
             end: Alignment.topLeft,
             colors: [
-              black.withOpacity(0.9),
-              black.withOpacity(0.4),
+              colors.widgetColors['bg']!.withOpacity(0.9),
+              colors.widgetColors['bg']!.withOpacity(0.6),
             ],
           ),
           borderRadius: BorderRadius.circular(14)),
@@ -66,15 +56,15 @@ class _TransactionStatisticsState extends State<TransactionStatistics> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Colors.white,
+                    color: colors.widgetColors['text']!,
                     width: 1,
                   ),
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      blue.withOpacity(0.5),
-                      blue.withOpacity(0.25),
+                      herodarkBlue.withOpacity(0.4),
+                      herodarkBlue.withOpacity(0.2),
                     ],
                   ),
                 ),
@@ -87,7 +77,7 @@ class _TransactionStatisticsState extends State<TransactionStatistics> {
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: 26,
-                            color: Colors.white70,
+                            color: colors.widgetColors['text'],
                           ),
                     ),
                     Text(
@@ -101,39 +91,6 @@ class _TransactionStatisticsState extends State<TransactionStatistics> {
                 ),
               );
             }).toList(),
-          ),
-          SizedBox(
-            height: 250,
-            child: SfCircularChart(
-              tooltipBehavior: _tooltipBehavior,
-              series: <CircularSeries>[
-                // Renders radial bar chart
-                RadialBarSeries<ChartData, String>(
-                  dataSource: chartData,
-                  gap: '5%',
-                  trackOpacity: 0.5,
-                  radius: '100%',
-                  //innerRadius: '60%',
-                  maximumValue: 2200,
-
-                  //sortingOrder: SortingOrder.ascending,
-                  cornerStyle: CornerStyle.bothCurve,
-                  xValueMapper: (ChartData data, _) => data.x,
-                  yValueMapper: (ChartData data, _) => data.y,
-                  pointColorMapper: (ChartData data, index) =>
-                      colorPalette[index % colorPalette.length],
-                ),
-              ],
-              legend: const Legend(
-                isVisible: true,
-                itemPadding: 10,
-                position: LegendPosition.bottom,
-                alignment: ChartAlignment.near,
-                iconHeight: 20,
-                iconWidth: 20,
-                overflowMode: LegendItemOverflowMode.scroll,
-              ),
-            ),
           ),
         ],
       ),
