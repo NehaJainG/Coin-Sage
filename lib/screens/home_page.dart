@@ -1,9 +1,9 @@
-import 'package:coin_sage/defaults/colors.dart';
 import 'package:flutter/material.dart';
 
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
 
+import 'package:coin_sage/screens/drawer.dart';
 import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/add_new_transaction.dart';
 import 'package:coin_sage/screens/user_rooms.dart';
@@ -23,14 +23,64 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedPage = 0;
+  double xOffset = 0;
+  double yOffset = 0;
+  double scaleFactor = 1;
+
+  bool isDrawerOpen = false;
   final List<Transaction> userTransaction = transactionData;
 
-  void _selectPage(int currentPageIndex) {
-    //body
-    setState(() {
-      _selectedPage = currentPageIndex;
-    });
+  Widget get AppBar {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          isDrawerOpen
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed: () {
+                    setState(() {
+                      xOffset = 0;
+                      yOffset = 0;
+                      scaleFactor = 1;
+                      isDrawerOpen = false;
+                    });
+                  },
+                )
+              : IconButton(
+                  icon: menuIcon,
+                  onPressed: () {
+                    setState(() {
+                      xOffset = size.width * 0.6;
+                      yOffset = size.height * 0.125;
+                      scaleFactor = 0.72;
+                      isDrawerOpen = true;
+                    });
+                  },
+                ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Neha',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 22,
+                    ),
+              ),
+              Text(
+                'Welcome :)',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 18,
+                    ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   void _addNewTransaction() async {
@@ -71,76 +121,50 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Widget fixedContent = Container(
-      child: Column(
-        children: [
-          QuickButtons(
-            newTransaction: _addNewTransaction,
-            newRoom: _addNewRoom,
-            allRooms: _viewRooms,
-            viewRequest: _viewRequests,
-          ),
-          const SizedBox(height: 15),
-          const TransactionStatistics(),
-          const SizedBox(height: 30),
-          const Divider(
-            color: Colors.white,
-            endIndent: 160,
-            indent: 160,
-            thickness: 3,
-          )
-        ],
+      child: SafeArea(
+        child: Column(
+          children: [
+            AppBar,
+            const SizedBox(height: 15),
+            QuickButtons(
+              newTransaction: _addNewTransaction,
+              newRoom: _addNewRoom,
+              allRooms: _viewRooms,
+              viewRequest: _viewRequests,
+            ),
+            const SizedBox(height: 15),
+            const TransactionStatistics(),
+            const SizedBox(height: 30),
+            const Divider(
+              color: Colors.white,
+              endIndent: 160,
+              indent: 160,
+              thickness: 3,
+            )
+          ],
+        ),
       ),
     );
 
     return Scaffold(
-        //backgroundColor: black,
-        drawer: const Drawer(),
-        appBar: AppBar(
-          title: const Text('Heyy Neha!'),
-          backgroundColor: blackBlue,
-        ),
-        body: TransactionList(
-          userTransactions: userTransaction,
-          additionalContent: fixedContent,
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: Theme.of(context).colorScheme.onBackground,
-          unselectedItemColor:
-              Theme.of(context).colorScheme.onBackground.withOpacity(0.60),
-          iconSize: 26,
-          currentIndex: _selectedPage,
-          onTap: _selectPage,
-          items: [
-            BottomNavigationBarItem(
-              //tooltip: 'home',
-              label: 'Home',
-              icon: homeIcon,
-              activeIcon: homeActive,
+      //backgroundColor: black,
+
+      body: Stack(
+        children: [
+          DrawerScreen(userName: 'Neha Jain'),
+          AnimatedContainer(
+            transform: Matrix4.translationValues(xOffset, yOffset, 0)
+              ..scale(scaleFactor)
+              ..rotateY(isDrawerOpen ? -0.5 : 0),
+            duration: Duration(milliseconds: 250),
+            child: TransactionList(
+              userTransactions: userTransaction,
+              additionalContent: fixedContent,
+              isDrawerOpen: isDrawerOpen,
             ),
-            BottomNavigationBarItem(
-              label: 'Accout',
-              icon: settingActive,
-            ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }
-
-
-// Expanded(
-//             child: Column(
-//               children: [
-//                 QuickButtons(
-//                   newTransaction: _addNewTransaction,
-//                   newRoom: _addNewRoom,
-//                   allRooms: _viewRooms,
-//                 ),
-//                 const Divider(),
-//                 const SizedBox(height: 5),
-//                 const TransactionStatistics(),
-//                 const SizedBox(height: 15),
-//                 Expanded(
-//                   child: TransactionList(
-//                     userTransactions: transactionData,
-//                   ),
-//                 ),
