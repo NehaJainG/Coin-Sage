@@ -3,14 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 
-class DrawerScreen extends StatelessWidget {
+class DrawerScreen extends StatefulWidget {
   DrawerScreen({
     super.key,
     required this.userName,
+    required this.closeDrawer,
+    required this.transaction,
+    required this.room,
+    required this.selectPage,
   });
-  final ColorProvider colors = ColorProvider();
-
   final String userName;
+  final void Function() closeDrawer;
+  final void Function() transaction;
+  final void Function() room;
+  final void Function(int) selectPage;
+
+  @override
+  State<DrawerScreen> createState() => _DrawerScreenState();
+}
+
+class _DrawerScreenState extends State<DrawerScreen> {
+  final ColorProvider colors = ColorProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +45,7 @@ class DrawerScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userName,
+                    widget.userName,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 26,
@@ -53,7 +66,18 @@ class DrawerScreen extends StatelessWidget {
           Column(
             children: drawerItems.entries
                 .map((element) => ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        widget.closeDrawer();
+                        if (element.key == 'Transaction') {
+                          widget.transaction();
+                        } else if (element.key == 'All Rooms') {
+                          widget.room();
+                        } else if (element.key == 'Home') {
+                          widget.selectPage(0);
+                        } else if (element.key == 'Reminder') {
+                          widget.selectPage(1);
+                        }
+                      },
                       title: Text(
                         element.key,
                         style: const TextStyle(
@@ -70,7 +94,9 @@ class DrawerScreen extends StatelessWidget {
           Column(
             children: [
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  widget.closeDrawer();
+                },
                 title: const Text(
                   'Settings',
                   style: TextStyle(
@@ -83,7 +109,9 @@ class DrawerScreen extends StatelessWidget {
                 textColor: colors.widgetColors['bg'],
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  widget.closeDrawer();
+                },
                 title: const Text(
                   'Logout',
                   style: TextStyle(

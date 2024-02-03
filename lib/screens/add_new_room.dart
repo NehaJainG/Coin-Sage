@@ -1,9 +1,11 @@
+import 'package:coin_sage/defaults/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/data/room_list.dart';
 import 'package:coin_sage/models/user.dart';
+import 'package:coin_sage/models/room.dart';
 
 class AddRoomScreen extends StatefulWidget {
   const AddRoomScreen({super.key});
@@ -16,23 +18,22 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   final _memberController = TextEditingController();
   List<User> members = [user1];
   String _enteredTitle = '';
-  String _enteredMember = '';
 
   void memberSearch() {
     if (_memberController.text.isNotEmpty ||
         _memberController.text.length < 21) {
       print(_memberController.text);
-      User? newMember = users.map(
+      User? newMember = users.where(
         (user) {
-          if (user.name == _memberController.text) {
-            print(_memberController.text);
-
-            return user;
-          }
+          return user.name == _memberController.text;
         },
       ).firstOrNull;
       if (newMember == null) {
         showSnackBar('No such user found. Try with other name.');
+        return;
+      }
+      if (members.contains(newMember)) {
+        showSnackBar('User already added.');
         return;
       }
       setState(() {
@@ -46,9 +47,21 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 5),
-        content: Text(message),
+        content: Text(
+          message,
+        ),
+        behavior: SnackBarBehavior.floating,
       ),
     );
+  }
+
+  void createRoom() {
+    Room r1 = Room(
+      id: 'sample',
+      title: _enteredTitle,
+      members: members,
+    );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -57,8 +70,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        //backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
-
         return SizedBox(
           child: SingleChildScrollView(
             child: Padding(
@@ -81,9 +92,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                         ),
                         Positioned(
                           right: 0,
-
                           top: 0,
-                          // left: 0,
                           child: exitButton(context),
                         )
                       ]),
@@ -130,7 +139,9 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       const SizedBox(height: 20),
                       Container(
                         height: 200,
-                        alignment: Alignment.center,
+                        width: double.infinity,
+                        alignment: Alignment.topLeft,
+                        padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           border: Border.all(
                               color: Theme.of(context)
@@ -139,23 +150,43 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: members.length == 1
-                            ? const Text(
-                                'No members added yet',
+                            ? const Center(
+                                child: Text(
+                                  'No members added yet',
+                                ),
                               )
-                            : Column(
-                                children: [
-                                  for (int index = 1;
-                                      index < members.length;
-                                      index++)
-                                    Text(members[index].name)
-                                ],
+                            : SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    for (int index = 1;
+                                        index < members.length;
+                                        index++)
+                                      Container(
+                                        margin: EdgeInsets.only(bottom: 10),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: lightGrey),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: ListTile(
+                                          title: Text(members[index].name),
+                                          trailing: IconButton(
+                                            icon: Icon(Icons.close),
+                                            onPressed: () {},
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                       ),
                       const SizedBox(height: 20),
                       FloatingActionButton.extended(
-                        onPressed: () {},
+                        onPressed: createRoom,
                         label: const Text('Create Room'),
-                        //icon: Icon(Icons.create_rounded),
                       ),
                     ],
                   ),

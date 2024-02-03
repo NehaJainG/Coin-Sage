@@ -18,6 +18,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   late TransactionType selectedtype;
   late List<DropdownMenuItem> dropdownItems;
   dynamic _selectedCategory;
+  dynamic _finalCategory;
   final DateTime _selectedDate = DateTime.now();
   String? _enteredComment;
   double _enteredAmount = 0;
@@ -30,6 +31,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     selectedtype = widget.type;
     dropdownItems = _dropdownItems(selectedtype);
     super.initState();
+  }
+
+  //valid amount verification
+  bool isNotValidAmt(String? amt) {
+    if (amt == null || amt.isEmpty) return true;
+    double? amount = double.tryParse(amt);
+    if (amount == null || amount <= 0) {
+      return true;
+    }
+    return false;
   }
 
   List<DropdownMenuItem> _dropdownItems(TransactionType type) {
@@ -99,6 +110,20 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         .toList();
   }
 
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 5),
+        content: Text(message,
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                  color: Colors.white,
+                )),
+        backgroundColor: herodarkBlue.withOpacity(0.7),
+      ),
+    );
+  }
+
   void saveTransaction() {
     Transaction? newTransaction;
     if (_formKey.currentState!.validate()) {
@@ -108,14 +133,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           amount: _enteredAmount,
           date: _selectedDate,
           comments: _enteredComment ?? '',
-          category: _selectedCategory,
+          category: _finalCategory,
         );
       } else if (selectedtype == TransactionType.Income) {
         newTransaction = Income(
           amount: _enteredAmount,
           date: _selectedDate,
           comments: _enteredComment ?? '',
-          category: _selectedCategory,
+          category: _finalCategory,
           isSteady: true,
         );
       } else if (selectedtype == TransactionType.Debt) {
@@ -124,10 +149,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             amount: _enteredAmount,
             date: _selectedDate,
             comments: _enteredComment ?? '',
-            category: _selectedCategory,
+            category: _finalCategory,
             returnDate: _dueDate!,
             reminderTime: _reminder ?? TimeOfDay.now(),
           );
+        } else {
+          showSnackBar('Please add Return date of the Debt');
+          return;
         }
       } else {
         if (_dueDate != null) {
@@ -135,10 +163,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             amount: _enteredAmount,
             date: _selectedDate,
             comments: _enteredComment ?? '',
-            category: _selectedCategory,
+            category: _finalCategory,
             dueDate: _dueDate!,
             reminderTime: _reminder ?? TimeOfDay.now(),
           );
+        } else {
+          showSnackBar('Please add Due date of the subscription');
         }
       }
 
@@ -151,20 +181,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       _reminder = userReminder;
     });
   }
-
-  // void currentDatePicker() async {
-  //   final now = DateTime.now();
-  //   final firstDate = DateTime(now.year - 1, now.month, now.day);
-  //   final pickedDate = await showDatePicker(
-  //       context: context,
-  //       initialDate: now,
-  //       firstDate: firstDate,
-  //       lastDate: now);
-  //   if (pickedDate == null) return;
-  //   setState(() {
-  //     _selectedDate = pickedDate;
-  //   });
-  // }
 
   void _dueDatePicker() async {
     final now = DateTime.now();
@@ -276,6 +292,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 _dueDate = null;
                                 _reminder = null;
                                 selectedtype = entry.key;
+                                _formKey.currentState!.reset();
                                 dropdownItems = _dropdownItems(selectedtype);
                               });
                             },
@@ -327,9 +344,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             prefixIcon: rupeeIcon,
                           ),
                           validator: (value) {
-                            double? amount = double.tryParse(value!);
-                            if (amount == null && amount! <= 0) {
-                              return 'Invalid amount';
+                            if (isNotValidAmt(value)) {
+                              return 'Invalid Input';
                             }
                             return null;
                           },
@@ -343,11 +359,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                         //category list
                         DropdownButtonFormField(
-                          hint: const Text('Select a category'),
-                          value: _selectedCategory,
-                          items: dropdownItems,
-                          onChanged: (category) {},
-                        ),
+                            hint: const Text('Select a category'),
+                            value: _selectedCategory,
+                            items: dropdownItems,
+                            onChanged: (category) {
+                              _finalCategory = category;
+                            },
+                            onSaved: (category) {}),
                         btwVertical,
                         additionalContent,
                         btwVertical,

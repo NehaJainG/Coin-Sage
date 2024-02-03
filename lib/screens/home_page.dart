@@ -1,3 +1,4 @@
+import 'package:coin_sage/screens/reminders.dart';
 import 'package:flutter/material.dart';
 
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -8,11 +9,11 @@ import 'package:coin_sage/screens/add_new_room.dart';
 import 'package:coin_sage/screens/add_new_transaction.dart';
 import 'package:coin_sage/screens/user_rooms.dart';
 import 'package:coin_sage/screens/requests.dart';
-import 'package:coin_sage/widgets/quick_buttons.dart';
-import 'package:coin_sage/widgets/statistics.dart';
+import 'package:coin_sage/widgets/home_page_header.dart';
 import 'package:coin_sage/widgets/transaction_list.dart';
 import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/icon.dart';
+import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/data/expense_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,15 +24,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedPage = 0;
   double xOffset = 0;
   double yOffset = 0;
   double scaleFactor = 1;
-
   bool isDrawerOpen = false;
+
   final List<Transaction> userTransaction = transactionData;
 
-  Widget get AppBar {
+  void closeDrawer() {
+    setState(() {
+      xOffset = 0;
+      yOffset = 0;
+      scaleFactor = 1;
+      isDrawerOpen = false;
+    });
+  }
+
+  void openDrawer() {
     Size size = MediaQuery.of(context).size;
+    setState(() {
+      xOffset = size.width * 0.6;
+      yOffset = size.height * 0.125;
+      scaleFactor = 0.72;
+      isDrawerOpen = true;
+    });
+  }
+
+  Widget get AppBar {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -39,25 +59,11 @@ class _HomePageState extends State<HomePage> {
           isDrawerOpen
               ? IconButton(
                   icon: Icon(Icons.arrow_back_ios),
-                  onPressed: () {
-                    setState(() {
-                      xOffset = 0;
-                      yOffset = 0;
-                      scaleFactor = 1;
-                      isDrawerOpen = false;
-                    });
-                  },
+                  onPressed: closeDrawer,
                 )
               : IconButton(
                   icon: menuIcon,
-                  onPressed: () {
-                    setState(() {
-                      xOffset = size.width * 0.6;
-                      yOffset = size.height * 0.125;
-                      scaleFactor = 0.72;
-                      isDrawerOpen = true;
-                    });
-                  },
+                  onPressed: openDrawer,
                 ),
           const SizedBox(width: 12),
           Column(
@@ -83,6 +89,37 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget get fixedContent {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(50),
+          top: Radius.circular(isDrawerOpen ? 20 : 0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: lightGrey.withOpacity(0.7),
+            blurRadius: 3,
+          )
+        ],
+        color: blackBlue,
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            AppBar,
+            HomeHeader(
+              newTransaction: _addNewTransaction,
+              newRoom: _addNewRoom,
+              allRooms: _viewRooms,
+              viewRequest: _viewRequests,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _addNewTransaction() async {
     final newTransaction = await Navigator.of(context).push<Transaction>(
       MaterialPageRoute(
@@ -97,11 +134,13 @@ class _HomePageState extends State<HomePage> {
 
   void _addNewRoom() {
     showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      useSafeArea: true,
-      builder: (ctx) => const AddRoomScreen(),
-    );
+        isScrollControlled: true,
+        context: context,
+        useSafeArea: true,
+        builder: (ctx) => const Scaffold(
+              backgroundColor: Colors.transparent,
+              body: AddRoomScreen(),
+            ));
   }
 
   void _viewRooms() {
@@ -118,50 +157,62 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget viewReminders() {
+    return Reminders(
+      appBar: AppBar,
+    );
+  }
+
+  Widget homePage() {
+    return TransactionList(
+      userTransactions: userTransaction,
+      additionalContent: fixedContent,
+      isDrawerOpen: isDrawerOpen,
+    );
+  }
+
+  void selectPage(value) {
+    setState(() {
+      _selectedPage = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget fixedContent = Container(
-      child: SafeArea(
-        child: Column(
-          children: [
-            AppBar,
-            const SizedBox(height: 15),
-            QuickButtons(
-              newTransaction: _addNewTransaction,
-              newRoom: _addNewRoom,
-              allRooms: _viewRooms,
-              viewRequest: _viewRequests,
-            ),
-            const SizedBox(height: 15),
-            const TransactionStatistics(),
-            const SizedBox(height: 30),
-            const Divider(
-              color: Colors.white,
-              endIndent: 160,
-              indent: 160,
-              thickness: 3,
-            )
-          ],
-        ),
-      ),
-    );
-
     return Scaffold(
-      //backgroundColor: black,
-
       body: Stack(
         children: [
-          DrawerScreen(userName: 'Neha Jain'),
+          DrawerScreen(
+            userName: 'Neha Jain',
+            selectPage: selectPage,
+            closeDrawer: closeDrawer,
+            transaction: _addNewTransaction,
+            room: _viewRooms,
+          ),
           AnimatedContainer(
             transform: Matrix4.translationValues(xOffset, yOffset, 0)
               ..scale(scaleFactor)
               ..rotateY(isDrawerOpen ? -0.5 : 0),
             duration: Duration(milliseconds: 250),
-            child: TransactionList(
-              userTransactions: userTransaction,
-              additionalContent: fixedContent,
-              isDrawerOpen: isDrawerOpen,
-            ),
+            child: _selectedPage == 0 ? homePage() : Reminders(appBar: AppBar),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedPage,
+        onTap: selectPage,
+        items: [
+          BottomNavigationBarItem(
+            icon: home,
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: reminderIcon,
+            label: 'Reminders',
+          ),
+          BottomNavigationBarItem(
+            icon: settings,
+            label: 'Setting',
           ),
         ],
       ),

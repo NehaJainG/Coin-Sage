@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:coin_sage/models/transaction.dart';
 
 //common icon:
-Icon refreshIcon = const Icon(Icons.refresh);
+Icon refreshIcon = const Icon(Icons.replay);
+Icon account = const Icon(Icons.account_circle_rounded);
+Icon logoutIcon = const Icon(Icons.logout_rounded);
+Icon menuIcon = const Icon(
+  Icons.menu_rounded,
+  size: 40,
+);
 
 //add new room icons
 Icon addIcon = const Icon(Icons.add);
@@ -19,14 +25,10 @@ Icon rupeeIcon = const Icon(Icons.currency_rupee_rounded);
 Icon calenderIcon = const Icon(Icons.calendar_month_rounded);
 
 //add bottom navigation
-Icon homeIcon = const Icon(Icons.home_outlined);
-Icon chat = const Icon(Icons.chat_bubble_outline_rounded);
-Icon setting = const Icon(Icons.settings_applications_rounded);
-Icon statistic = const Icon(Icons.stacked_bar_chart_rounded);
-Icon homeActive = const Icon(Icons.home_filled);
-Icon statisticActive = const Icon(Icons.bar_chart_rounded);
-Icon chatActive = const Icon(Icons.chat_bubble_rounded);
-Icon settingActive = const Icon(Icons.settings);
+
+Icon home = const Icon(Icons.home_filled);
+Icon settings = const Icon(Icons.settings);
+Icon reminderIcon = const Icon(Icons.notifications_active);
 
 //Transaction type icon
 Map<TransactionType, Icon> iconList = {
@@ -73,4 +75,13 @@ const categoryIcons = {
   SubscriptionCategory.Utilities: Icons.lightbulb_outline,
   SubscriptionCategory.Insurance: Icons.security,
   SubscriptionCategory.Other: Icons.attach_money,
+};
+
+//drawer items
+const drawerItems = {
+  'Home': Icon(Icons.home_filled),
+  'Reminder': Icon(Icons.notifications_active),
+  'Transaction': Icon(Icons.currency_exchange),
+  'All Rooms': Icon(Icons.groups),
+  'Favorites': Icon(Icons.favorite),
 };

@@ -5,22 +5,23 @@ import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/widgets/transaction_item.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class TransactionList extends ConsumerWidget {
-  const TransactionList({
+class TransactionList extends StatelessWidget {
+  TransactionList({
     super.key,
     required this.userTransactions,
     required this.additionalContent,
+    required this.isDrawerOpen,
   });
 
   final List<Transaction> userTransactions;
   final Widget? additionalContent;
 
+  final bool isDrawerOpen;
+
   static ColorProvider colors = ColorProvider();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     Widget transactionList = SliverToBoxAdapter(
       child: Center(
         child: Text(
@@ -48,60 +49,64 @@ class TransactionList extends ConsumerWidget {
         ),
       );
     }
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 20),
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(50),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: lightGrey.withOpacity(0.7),
-                  blurRadius: 3,
-                )
-              ],
-              color: blackBlue,
-            ),
-            child: additionalContent ?? const SizedBox(),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: BorderRadius.circular(isDrawerOpen ? 20 : 0),
+        boxShadow: [
+          BoxShadow(
+            color: black,
+            blurRadius: 25,
           ),
-        ),
-        SliverPersistentHeader(
-          pinned: true,
-          //floating: true,
-          delegate: _SliverAppBarDelegate(
+        ],
+      ),
+      child: CustomScrollView(
+        slivers: [
+          //above content
+          SliverToBoxAdapter(
             child: Container(
-              alignment: Alignment.centerLeft,
-              padding: dePadding,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.access_time_rounded,
-                    size: 27,
-                    color: Color.fromARGB(222, 255, 255, 255),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Recent Transactions',
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.w400,
-                        ),
-                  ),
-                ],
-              ),
+              child: additionalContent ?? const SizedBox(),
             ),
-            minHeight: 60.0,
-            maxHeight: 60.0,
           ),
-        ),
-        transactionList,
-      ],
+
+          // app bar for the transaction list
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SliverAppBarDelegate(
+              child: Container(
+                alignment: Alignment.centerLeft,
+                padding: dePadding,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.access_time_rounded,
+                      size: 27,
+                      color: Color.fromARGB(222, 255, 255, 255),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Recent Transactions',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontWeight: FontWeight.w400,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              minHeight: 60.0,
+              maxHeight: 60.0,
+            ),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            sliver: transactionList,
+          ),
+        ],
+      ),
     );
   }
 }

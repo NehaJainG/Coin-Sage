@@ -24,7 +24,8 @@ class ColorProvider {
 }
 
 //colors:
-Color black = Color.fromARGB(255, 0, 0, 0);
+Color white = Colors.white;
+Color black = const Color.fromARGB(255, 0, 0, 0);
 Color herodarkBlue = const Color.fromARGB(255, 56, 114, 255);
 Color green = const Color.fromARGB(255, 75, 229, 80);
 Color red = const Color.fromARGB(255, 251, 100, 100);
