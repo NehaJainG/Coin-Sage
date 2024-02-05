@@ -1,9 +1,11 @@
-import 'package:coin_sage/defaults/colors.dart';
+import 'package:coin_sage/services/room_repo.dart';
+import 'package:coin_sage/services/user_repo.dart';
 import 'package:flutter/material.dart';
 
+import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/defaults.dart';
-import 'package:coin_sage/data/room_list.dart';
+
 import 'package:coin_sage/models/user.dart';
 import 'package:coin_sage/models/room.dart';
 
@@ -15,52 +17,74 @@ class AddRoomScreen extends StatefulWidget {
 }
 
 class _AddRoomScreenState extends State<AddRoomScreen> {
+  UserRepo userCollection = UserRepo();
+  RoomRepositories roomRepo = RoomRepositories();
   final _memberController = TextEditingController();
-  List<User> members = [user1];
-  String _enteredTitle = '';
+  final _titleController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  List<User> members = [];
+  String _errorMessage = '';
+  bool validUser = true;
 
-  void memberSearch() {
+  Future<List<User>> get users async {
+    final users = await userCollection.getAllUsers();
+    return users;
+  }
+
+  void memberSearch() async {
+    //validating if user with given email exists
     if (_memberController.text.isNotEmpty ||
-        _memberController.text.length < 21) {
-      print(_memberController.text);
-      User? newMember = users.where(
-        (user) {
-          return user.name == _memberController.text;
-        },
-      ).firstOrNull;
+        isValidEmail(_memberController.text)) {
+      User? newMember = await userCollection.getUser(_memberController.text);
+
+      //Does user's email given is valid?
       if (newMember == null) {
-        showSnackBar('No such user found. Try with other name.');
+        validUser = false;
+        _errorMessage = 'Enter a valid user email';
+        print('invalid');
+        _formKey.currentState!.validate();
         return;
       }
-      if (members.contains(newMember)) {
-        showSnackBar('User already added.');
+
+      //Check if user is already added
+      if (members.where(
+        (element) {
+          return element.email == newMember.email;
+        },
+      ).isNotEmpty) {
+        validUser = false;
+        print('already');
+        _errorMessage = 'User already added';
+        _formKey.currentState!.validate();
         return;
       }
+
+      //finally add user
+      validUser = true;
+      print('valid');
+      _formKey.currentState!.validate();
       setState(() {
         members.add(newMember);
       });
     }
   }
 
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 5),
-        content: Text(
-          message,
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  void createRoom() {
-    Room r1 = Room(
-      id: 'sample',
-      title: _enteredTitle,
-      members: members,
-    );
+  void createRoom() async {
+    if (!isNotValidTitle(_titleController.text) && members.isNotEmpty) {
+      print('here');
+      //create data using room model
+      Room room = Room(
+        id: '',
+        title: _titleController.text,
+        members: members.map((e) => e.email).toList(),
+      );
+      //add data to firestore
+      await roomRepo.addRoom(room);
+      showSnackBar('Created the room', context);
+      Navigator.of(context).pop();
+      return;
+    }
+    showSnackBar('Failed to create the room', context);
     Navigator.of(context).pop();
   }
 
@@ -73,8 +97,9 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         return SizedBox(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 40, 20, keyboardSpace + 20),
+              padding: EdgeInsets.fromLTRB(20.0, 40, 20, keyboardSpace + 50),
               child: Form(
+                key: _formKey,
                 child: SizedBox(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -96,25 +121,23 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           child: exitButton(context),
                         )
                       ]),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
                       TextFormField(
-                          decoration: inputDecor(
-                            'Title',
-                            roomTitle,
-                            null,
-                            null,
-                          ),
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.length < 20) {
-                              return 'Must be between 1 and 20 characters';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            _enteredTitle = value!;
-                          }),
+                        controller: _titleController,
+                        decoration: inputDecor(
+                          'Title',
+                          roomTitle,
+                          null,
+                          null,
+                        ),
+                        validator: (value) {
+                          if (isNotValidTitle(_titleController.text)) {
+                            print('text error');
+                            return 'Must be between 1 and 20 characters';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 20),
                       Row(
                         children: [
@@ -125,8 +148,10 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                 'Member',
                                 addMemberIcon,
                                 null,
-                                'Enter member\'s name',
+                                'Enter member\'s email',
                               ),
+                              validator: (value) =>
+                                  validUser ? null : _errorMessage,
                             ),
                           ),
                           //const SizedBox(width: 10),
@@ -141,15 +166,15 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                         height: 200,
                         width: double.infinity,
                         alignment: Alignment.topLeft,
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           border: Border.all(
                               color: Theme.of(context)
                                   .colorScheme
                                   .onPrimaryContainer),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        child: members.length == 1
+                        child: members.length == 0
                             ? const Center(
                                 child: Text(
                                   'No members added yet',
@@ -161,11 +186,11 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    for (int index = 1;
+                                    for (int index = 0;
                                         index < members.length;
                                         index++)
                                       Container(
-                                        margin: EdgeInsets.only(bottom: 10),
+                                        margin: EdgeInsets.only(bottom: 15),
                                         decoration: BoxDecoration(
                                           border: Border.all(color: lightGrey),
                                           borderRadius:
@@ -175,7 +200,11 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                           title: Text(members[index].name),
                                           trailing: IconButton(
                                             icon: Icon(Icons.close),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              setState(() {
+                                                members.removeAt(index);
+                                              });
+                                            },
                                           ),
                                         ),
                                       ),

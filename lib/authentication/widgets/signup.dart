@@ -1,5 +1,5 @@
 import 'package:coin_sage/authentication/firebase_auth/firebase_auth_servies.dart';
-import 'package:coin_sage/screens/home_page.dart';
+import 'package:coin_sage/screens/main/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,10 +26,7 @@ class _SignUpState extends State<SignUp> {
 
   void createAccount() async {
     if (_formKey.currentState!.validate()) {
-      //String name = _nameController.text;
-      String email = _emailController.text;
-      String password = _passwordController.text;
-      _signUp(email, password);
+      _signUp();
     }
   }
 
@@ -119,8 +116,9 @@ class _SignUpState extends State<SignUp> {
             },
           ),
           SizedBox(height: nFormPadding),
-          SizedBox(
+          Container(
             width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 25),
             child: ElevatedButton(
               onPressed: createAccount,
               child: const Text('SIGN UP'),
@@ -137,8 +135,11 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void _signUp(String email, String password) async {
-    User? user = await _auth.signUpWithEmailAndPassword(email, password);
+  void _signUp() async {
+    String name = _nameController.text;
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    User? user = await _auth.signUpWithEmailAndPassword(email, password, name);
 
     if (user != null) {
       print("User is successfully created");

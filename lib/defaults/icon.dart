@@ -11,6 +11,8 @@ Icon menuIcon = const Icon(
   size: 40,
 );
 
+Icon backIcon = const Icon(Icons.arrow_back_ios);
+
 //add new room icons
 Icon addIcon = const Icon(Icons.add);
 Icon addMemberIcon = const Icon(Icons.person_add_alt_1_rounded);

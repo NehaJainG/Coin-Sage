@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:coin_sage/defaults/colors.dart';
+
 InputDecoration inputDecor(
     String label, Icon? prefixIcon, String? prefixText, String? hintText) {
   return InputDecoration(
@@ -42,4 +44,26 @@ bool isValidEmail(String email) {
   return RegExp(
           r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
       .hasMatch(email);
+}
+
+bool isNotValidTitle(String title) {
+  return title.isEmpty || title.length > 25;
+}
+
+Widget circularProgress = const Center(
+  child: CircularProgressIndicator(),
+);
+
+void showSnackBar(String message, BuildContext context) {
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      duration: const Duration(seconds: 5),
+      content: Text(message,
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                color: Colors.white,
+              )),
+      backgroundColor: herodarkBlue.withOpacity(0.7),
+    ),
+  );
 }

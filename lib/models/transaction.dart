@@ -1,9 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 final formatter = DateFormat.yMd();
 final dateFormatter = DateFormat.yMMMd();
 final timeFormatter = DateFormat.jm();
+
+TimeOfDay parseTimeOfDay(String t) {
+  DateTime dateTime = DateFormat("HH:mm aaa").parse(t);
+  return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+}
+
+String timeFormat(TimeOfDay time) {
+  String addLeadingZeroIfNeeded(int value) {
+    if (value < 10) {
+      return '0$value';
+    }
+    return value.toString();
+  }
+
+  final String timePeriod = time.period.name;
+
+  final String hourLabel = addLeadingZeroIfNeeded(time.hour);
+  final String minuteLabel = addLeadingZeroIfNeeded(time.minute);
+
+  return '$hourLabel:$minuteLabel $timePeriod';
+}
 
 enum TransactionType {
   Income,
@@ -69,6 +91,14 @@ class Transaction {
   String get categoryName {
     return category.toString().split('.')[1];
   }
+
+  Map<String, dynamic> toJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': category,
+        'date': dateFormatter.format(date),
+      };
 }
 
 class Expense extends Transaction {
@@ -85,10 +115,36 @@ class Expense extends Transaction {
           category: category,
         );
 
+  factory Expense.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    var cate;
+    for (ExpenseCategory categories in ExpenseCategory.values) {
+      if (categories.name == data['category']) {
+        cate = categories;
+      }
+    }
+    return Expense(
+      amount: data['amount'],
+      date: dateFormatter.parse(data['date']),
+      comments: data['comments'],
+      category: cate,
+    );
+  }
+
   @override
   String get categoryName {
     return category.toString().split('.')[1];
   }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': categoryName,
+        'date': dateFormatter.format(date),
+      };
 }
 
 class Income extends Transaction {
@@ -108,10 +164,37 @@ class Income extends Transaction {
           category: category,
         );
 
+  factory Income.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    var cate;
+    for (IncomeCategory categories in IncomeCategory.values) {
+      if (categories.name == data['category']) {
+        cate = categories;
+      }
+    }
+    return Income(
+      amount: data['amount'],
+      date: dateFormatter.parse(data['date']),
+      comments: data['comments'],
+      category: cate,
+      isSteady: data['isSteady'],
+    );
+  }
+
   @override
   String get categoryName {
     return category.toString().split('.')[1];
   }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': categoryName,
+        'date': dateFormatter.format(date),
+        'isSteady': isSteady,
+      };
 }
 
 class Debt extends Transaction {
@@ -133,10 +216,39 @@ class Debt extends Transaction {
           category: category,
         );
 
+  factory Debt.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    var cate;
+    for (DebtCategory categories in DebtCategory.values) {
+      if (categories.name == data['category']) {
+        cate = categories;
+      }
+    }
+    return Debt(
+      amount: data['amount'],
+      date: dateFormatter.parse(data['date']),
+      comments: data['comments'],
+      category: cate,
+      returnDate: dateFormatter.parse(data['returnDate']),
+      reminderTime: parseTimeOfDay(data['reminderTime']),
+    );
+  }
+
   @override
   String get categoryName {
     return category.toString().split('.')[1];
   }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': categoryName,
+        'date': dateFormatter.format(date),
+        'returnDate': dateFormatter.format(returnDate),
+        'reminderTime': timeFormat(reminderTime),
+      };
 }
 
 class Subscription extends Transaction {
@@ -158,8 +270,38 @@ class Subscription extends Transaction {
           category: category,
         );
 
+  factory Subscription.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    var cate;
+    for (SubscriptionCategory categories in SubscriptionCategory.values) {
+      if (categories.name == data['category']) {
+        cate = categories;
+      }
+    }
+    return Subscription(
+      amount: data['amount'],
+      date: dateFormatter.parse(data['date']),
+      comments: data['comments'],
+      category: cate,
+      dueDate: dateFormatter.parse(data['dueDate']),
+      reminderTime: parseTimeOfDay(data['reminderTime']),
+    );
+  }
+
   @override
   String get categoryName {
     return category.toString().split('.')[1];
   }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': categoryName,
+        'date': dateFormatter.format(date),
+        'dueDate': dateFormatter.format(dueDate),
+        'reminderTime': timeFormat(reminderTime),
+      };
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/defaults/strings.dart';
+import 'package:coin_sage/screens/main/home_page.dart';
 import 'package:coin_sage/authentication/widgets/signup.dart';
 import 'package:coin_sage/authentication/widgets/signin.dart';
 import 'package:coin_sage/authentication/widgets/login_header.dart';
-import 'package:coin_sage/screens/home_page.dart';
+import 'package:coin_sage/defaults/strings.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

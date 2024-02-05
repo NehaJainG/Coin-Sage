@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/defaults.dart';
-import 'package:coin_sage/widgets/transaction_item.dart';
+import 'package:coin_sage/widgets/transaction/transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   TransactionList({
@@ -23,13 +23,15 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget transactionList = SliverToBoxAdapter(
-      child: Center(
+      child: Container(
+        alignment: Alignment.center,
         child: Text(
           'No transactions found:)',
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );
+
     if (userTransactions.isNotEmpty) {
       transactionList = SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -49,6 +51,7 @@ class TransactionList extends StatelessWidget {
         ),
       );
     }
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -73,29 +76,34 @@ class TransactionList extends StatelessWidget {
           SliverPersistentHeader(
             pinned: true,
             delegate: _SliverAppBarDelegate(
-              child: Container(
-                alignment: Alignment.centerLeft,
-                padding: dePadding,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      size: 27,
-                      color: Color.fromARGB(222, 255, 255, 255),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Recent Transactions',
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            fontWeight: FontWeight.w400,
+              child: userTransactions.isEmpty
+                  ? const SizedBox()
+                  : Container(
+                      alignment: Alignment.centerLeft,
+                      padding: dePadding,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.access_time_rounded,
+                            size: 27,
+                            color: Color.fromARGB(222, 255, 255, 255),
                           ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Recent Transactions',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                  fontWeight: FontWeight.w400,
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
               minHeight: 60.0,
               maxHeight: 60.0,
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:coin_sage/authentication/firebase_auth/firebase_auth_servies.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 
@@ -24,6 +25,11 @@ class DrawerScreen extends StatefulWidget {
 
 class _DrawerScreenState extends State<DrawerScreen> {
   final ColorProvider colors = ColorProvider();
+
+  void signOut() {
+    final auth = FirebaseAuthService();
+    auth.logout();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,24 +100,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
           Column(
             children: [
               ListTile(
-                onTap: () {
-                  widget.closeDrawer();
-                },
-                title: const Text(
-                  'Settings',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-                leading: settings,
-                iconColor: colors.widgetColors['bg'],
-                textColor: colors.widgetColors['bg'],
-              ),
-              ListTile(
-                onTap: () {
-                  widget.closeDrawer();
-                },
+                onTap: signOut,
                 title: const Text(
                   'Logout',
                   style: TextStyle(
@@ -123,6 +112,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 iconColor: red,
                 textColor: red,
               ),
+              const SizedBox(width: 40),
             ],
           )
         ],

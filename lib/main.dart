@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:coin_sage/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-//import 'package:coin_sage/authentication/screens/login.dart';
-import 'package:coin_sage/screens/home_page.dart';
+import 'package:coin_sage/firebase_options.dart';
 import 'package:coin_sage/defaults/colors.dart';
-//import 'package:google_fonts/google_fonts.dart';
+import 'package:coin_sage/screens/app_gate.dart';
 
 final customisedTheme = ThemeData(
   useMaterial3: true,
@@ -27,13 +25,11 @@ final darkTheme = ThemeData(
   //textTheme: GoogleFonts.poppinsTextTheme(),
 );
 
-//Future
-void main() {
-//async {
-  // await WidgetsFlutterBinding.ensureInitialized();
-  // Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -46,9 +42,9 @@ class MyApp extends StatelessWidget {
       title: 'Your CoinSage',
       theme: customisedTheme,
       darkTheme: darkTheme,
-      home: HomePage(),
+      home: AppGate(),
       debugShowCheckedModeBanner: false,
-      // LoginScreen(),
+      // ,
     );
   }
 }

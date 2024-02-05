@@ -1,20 +1,23 @@
-import 'package:coin_sage/screens/reminders.dart';
+import 'package:coin_sage/services/transaction_repo.dart';
 import 'package:flutter/material.dart';
 
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
 
-import 'package:coin_sage/screens/drawer.dart';
-import 'package:coin_sage/screens/add_new_room.dart';
-import 'package:coin_sage/screens/add_new_transaction.dart';
-import 'package:coin_sage/screens/user_rooms.dart';
-import 'package:coin_sage/screens/requests.dart';
-import 'package:coin_sage/widgets/home_page_header.dart';
-import 'package:coin_sage/widgets/transaction_list.dart';
+import 'package:coin_sage/widgets/home/drawer.dart';
+import 'package:coin_sage/screens/main/reminders.dart';
+import 'package:coin_sage/screens/room/user_rooms.dart';
+import 'package:coin_sage/screens/room/requests.dart';
+import 'package:coin_sage/screens/addnew/room.dart';
+import 'package:coin_sage/screens/addnew/transaction.dart';
+
+import 'package:coin_sage/widgets/home/home_page_header.dart';
+import 'package:coin_sage/widgets/transaction/transaction_list.dart';
+
 import 'package:coin_sage/models/transaction.dart';
+
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
-import 'package:coin_sage/data/expense_list.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -24,13 +27,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TransactionRepository transactionRepo = TransactionRepository();
   int _selectedPage = 0;
   double xOffset = 0;
   double yOffset = 0;
   double scaleFactor = 1;
   bool isDrawerOpen = false;
 
-  final List<Transaction> userTransaction = transactionData;
+  List<Transaction> userTransaction = [];
+
+  @override
+  void initState() {
+    getTransaction();
+    super.initState();
+  }
+
+  void getTransaction() async {
+    userTransaction = [];
+
+    print('above');
+    List<Transaction>? list =
+        await transactionRepo.getTransactions('YRO5kiuXM6XJU73ZJtdkDtsNxTo2');
+    if (list == null) {
+      return;
+    }
+    setState(() {
+      userTransaction.addAll(list);
+    });
+  }
 
   void closeDrawer() {
     setState(() {
@@ -53,12 +77,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget get AppBar {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
       child: Row(
         children: [
           isDrawerOpen
               ? IconButton(
-                  icon: Icon(Icons.arrow_back_ios),
+                  icon: backIcon,
                   onPressed: closeDrawer,
                 )
               : IconButton(
@@ -83,6 +107,11 @@ class _HomePageState extends State<HomePage> {
                     ),
               ),
             ],
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: getTransaction,
+            icon: refreshIcon,
           ),
         ],
       ),
@@ -134,13 +163,11 @@ class _HomePageState extends State<HomePage> {
 
   void _addNewRoom() {
     showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        useSafeArea: true,
-        builder: (ctx) => const Scaffold(
-              backgroundColor: Colors.transparent,
-              body: AddRoomScreen(),
-            ));
+      isScrollControlled: true,
+      context: context,
+      useSafeArea: true,
+      builder: (ctx) => const AddRoomScreen(),
+    );
   }
 
   void _viewRooms() {

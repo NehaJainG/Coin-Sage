@@ -1,5 +1,5 @@
 import 'package:coin_sage/authentication/firebase_auth/firebase_auth_servies.dart';
-import 'package:coin_sage/screens/home_page.dart';
+import 'package:coin_sage/screens/main/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,11 +26,20 @@ class _SignInState extends State<SignIn> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void authenticate() {
+  void authenticate() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text;
       String password = _passwordController.text;
-      _signIn(email, password);
+      User? user = await _auth.signInWithEmailAndPassword(email, password);
+
+      if (user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+        return;
+      }
     }
   }
 
@@ -65,75 +74,52 @@ class _SignInState extends State<SignIn> {
               }),
           SizedBox(height: nFormPadding - 15),
           TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 20,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                labelText: 'Password',
-                prefixIcon: password,
-                suffix: IconButton(
-                  icon: const Icon(Icons.remove_red_eye_rounded),
-                  onPressed: () {},
-                ),
-              ),
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.visiblePassword,
-              validator: (value) {
-                if (value == null || value.isEmpty || value.length < 6) {
-                  return 'Password must have atleast 6 characters';
-                }
-                return null;
-              }),
-          SizedBox(height: nFormPadding - 20),
+            controller: _passwordController,
+            decoration: inputDecor(
+              'Password',
+              password,
+              null,
+              'password',
+            ),
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.visiblePassword,
+            validator: (value) {
+              if (value == null || value.isEmpty || value.length < 6) {
+                return 'Password must have atleast 6 characters';
+              }
+              return null;
+            },
+          ),
+          SizedBox(height: nFormPadding - 30),
           const Align(
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: null,
-              child: const Text('Forgot Password?'),
+              child: Text('Forgot Password?'),
             ),
           ),
-          SizedBox(height: nFormPadding - 20),
-          SizedBox(
+          SizedBox(height: nFormPadding - 25),
+          Container(
             width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 25),
             child: ElevatedButton(
               onPressed: authenticate,
               child: const Text('LOGIN'),
             ),
           ),
-          SizedBox(height: nFormPadding - 25),
           Align(
             alignment: Alignment.center,
             child: TextButton(
               onPressed: () {
                 widget.changeToSignup(signup);
               },
-              child: const Text('Already have accout? Sign in'),
+              child: const Text('Don\'t have account? Sign Up'),
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _signIn(String email, String password) async {
-    User? user = await _auth.signInWithEmailAndPassword(email, password);
-
-    if (user != null) {
-      print("Signed in");
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
-    } else {
-      print('error');
-    }
   }
 }

@@ -1,31 +1,54 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseAuthService {
-  static FirebaseAuth _auth = FirebaseAuth.instance;
+  //create authentication and firestore instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  //sign up user
   Future<User?> signUpWithEmailAndPassword(
-      String email, String password) async {
+    String email,
+    String password,
+    String name,
+  ) async {
     try {
+      //create account
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
+      //save user info in user collection
+      _firestore.collection('Users').doc(credential.user!.uid).set(
+        {
+          'email': email,
+          'name': name,
+        },
+      );
       return credential.user;
-    } catch (e) {
-      print("some error occured");
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
     }
-    return null;
   }
 
+  //if already have account
   Future<User?> signInWithEmailAndPassword(
-      String email, String password) async {
+    String email,
+    String password,
+  ) async {
     try {
-      print('wait $email $password');
+      //log into existing account
       UserCredential credential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-
+        email: email,
+        password: password,
+      );
       return credential.user;
-    } catch (e) {
-      print("some error occured");
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
     }
-    return null;
+  }
+
+  Future logout() async {
+    return await _auth.signOut();
   }
 }

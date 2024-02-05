@@ -1,3 +1,4 @@
+import 'package:coin_sage/services/transaction_repo.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
@@ -15,6 +16,7 @@ class AddTransactionScreen extends StatefulWidget {
 }
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
+  final TransactionRepository transRepo = TransactionRepository();
   late TransactionType selectedtype;
   late List<DropdownMenuItem> dropdownItems;
   dynamic _selectedCategory;
@@ -110,21 +112,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         .toList();
   }
 
-  void showSnackBar(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 5),
-        content: Text(message,
-            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  color: Colors.white,
-                )),
-        backgroundColor: herodarkBlue.withOpacity(0.7),
-      ),
-    );
-  }
-
-  void saveTransaction() {
+  void saveTransaction() async {
     Transaction? newTransaction;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -154,7 +142,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             reminderTime: _reminder ?? TimeOfDay.now(),
           );
         } else {
-          showSnackBar('Please add Return date of the Debt');
+          showSnackBar('Please add Return date of the Debt', context);
           return;
         }
       } else {
@@ -168,10 +156,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             reminderTime: _reminder ?? TimeOfDay.now(),
           );
         } else {
-          showSnackBar('Please add Due date of the subscription');
+          showSnackBar('Please add Due date of the subscription', context);
         }
       }
 
+      final data = await transRepo.addTransaction(
+          newTransaction!, 'YRO5kiuXM6XJU73ZJtdkDtsNxTo2');
+      print(data);
       Navigator.of(context).pop<Transaction>(newTransaction);
     }
   }
@@ -211,6 +202,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     dropdownItems = _dropdownItems(selectedtype);
     Widget additionalContent = const SizedBox();
     if (selectedtype == TransactionType.Debt ||
@@ -264,9 +256,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       )),
       body: Center(
         child: SingleChildScrollView(
-          //padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: Container(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, keyboardSpace + 30),
             child: Column(
               children: [
                 Text(
@@ -365,7 +356,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             onChanged: (category) {
                               _finalCategory = category;
                             },
-                            onSaved: (category) {}),
+                            onSaved: (category) {
+                              _finalCategory = category;
+                            }),
                         btwVertical,
                         additionalContent,
                         btwVertical,
