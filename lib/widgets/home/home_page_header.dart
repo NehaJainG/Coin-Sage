@@ -44,7 +44,7 @@ class HomeHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
-                        color: herodarkBlue,
+                        color: heroBlue,
                         spreadRadius: 10,
                       ),
                     ],

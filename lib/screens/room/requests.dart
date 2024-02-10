@@ -1,23 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:coin_sage/services/user_repo.dart';
+import 'package:coin_sage/services/room_repo.dart';
+import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/models/room.dart';
 
 class RequestScreen extends StatefulWidget {
-  RequestScreen({super.key});
+  const RequestScreen({
+    super.key,
+    required this.user,
+  });
+
+  final User user;
 
   @override
   State<RequestScreen> createState() => _RequestScreenState();
 }
 
 class _RequestScreenState extends State<RequestScreen> {
+  RoomRepositories roomRepo = RoomRepositories();
+  UserRepo userRepo = UserRepo();
+
   List<Room>? roomRequest;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    getRequests();
+    super.initState();
+  }
+
+  void getRequests() async {
+    setState(() {
+      isLoading = true;
+    });
+    print(widget.user.email);
+    final requests = await roomRepo.getRoomsRequests(widget.user.email!);
+    setState(() {
+      roomRequest = requests;
+      isLoading = false;
+    });
+  }
 
   void acceptRequest(Room room, int index) {
+    userRepo.addRoomId(widget.user.email!, room.id!);
+    userRepo.removeRequestId(widget.user.email!, room.id!);
     setState(() {
       roomRequest!.remove(room);
     });
+
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -36,6 +70,7 @@ class _RequestScreenState extends State<RequestScreen> {
   }
 
   void declineRequest(Room room, int index) {
+    userRepo.removeRequestId(widget.user.email!, room.id!);
     setState(() {
       roomRequest!.remove(room);
     });
@@ -74,7 +109,7 @@ class _RequestScreenState extends State<RequestScreen> {
             child: Row(
               children: [
                 Text(
-                  roomRequest![index].title,
+                  roomRequest![index].title.toUpperCase(),
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const Spacer(),
@@ -129,11 +164,25 @@ class _RequestScreenState extends State<RequestScreen> {
         actions: [
           IconButton(
             icon: refreshIcon,
-            onPressed: () {},
+            onPressed: getRequests,
           ),
         ],
       ),
-      body: content,
+      body: StreamBuilder(
+        stream: roomRepo.roomDB.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show circular progress while loading
+            return circularProgress;
+          } else if (!snapshot.hasData || snapshot.data!.size == 0) {
+            // Show a message when no data exists
+            return content;
+          } else {
+            // Show your content when data is available
+            return content;
+          }
+        },
+      ),
     );
   }
 }

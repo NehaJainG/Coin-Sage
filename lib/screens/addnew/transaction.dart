@@ -1,4 +1,5 @@
 import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
@@ -7,8 +8,10 @@ import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/models/transaction.dart';
 
 class AddTransactionScreen extends StatefulWidget {
-  const AddTransactionScreen({super.key});
+  const AddTransactionScreen({super.key, required this.user});
   final TransactionType type = TransactionType.Expense;
+
+  final User user;
   @override
   State<AddTransactionScreen> createState() {
     return _AddTransactionScreenState();
@@ -160,8 +163,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         }
       }
 
-      final data = await transRepo.addTransaction(
-          newTransaction!, 'YRO5kiuXM6XJU73ZJtdkDtsNxTo2');
+      final data =
+          await transRepo.addTransaction(newTransaction!, widget.user.uid);
       print(data);
       Navigator.of(context).pop<Transaction>(newTransaction);
     }
@@ -210,41 +213,33 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       additionalContent = Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Row(
-            children: [
-              Text(
-                _dueDate == null
-                    ? selectedtype == TransactionType.Debt
-                        ? 'Pick Return Date'
-                        : 'Pick Due Date'
-                    : dateFormatter.format(_dueDate!),
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              IconButton(
-                icon: calenderIcon,
-                onPressed: _dueDatePicker,
-              ),
-            ],
+          TextButton.icon(
+            icon: calenderIcon,
+            onPressed: _dueDatePicker,
+            label: Text(
+              _dueDate == null
+                  ? selectedtype == TransactionType.Debt
+                      ? 'Pick Return Date'
+                      : 'Pick Due Date'
+                  : dateFormatter.format(_dueDate!),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
           ),
-          Row(
-            children: [
-              Text(
-                'Set Remainder',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              IconButton(
-                icon: _reminder != null
-                    ? const Icon(
-                        Icons.notifications,
-                      )
-                    : const Icon(Icons.notification_add_rounded),
-                onPressed: setReminder,
-              ),
-            ],
+          TextButton.icon(
+            onPressed: setReminder,
+            icon: _reminder != null
+                ? const Icon(
+                    Icons.notifications,
+                  )
+                : const Icon(Icons.notification_add_rounded),
+            label: Text(
+              'Set Remainder',
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
           ),
         ],
       );
@@ -297,7 +292,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 boxShadow: [
                                   BoxShadow(
                                     color: selectedtype == entry.key
-                                        ? Colors.blue
+                                        ? heroBlue
                                         : Colors.white,
                                     spreadRadius: 15,
                                   ),
@@ -439,6 +434,7 @@ class _SetReminderState extends State<SetReminder> {
     return LayoutBuilder(builder: (context, constraints) {
       return SingleChildScrollView(
         child: Container(
+          color: Theme.of(context).colorScheme.background.withOpacity(.8),
           width: double.infinity,
           padding: const EdgeInsets.all(30),
           child: Column(
@@ -457,38 +453,68 @@ class _SetReminderState extends State<SetReminder> {
                   exitButton(context),
                 ],
               ),
-              const SizedBox(height: 20),
-              Container(
-                padding: dePadding,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    width: 2,
-                    color: Theme.of(context).dividerColor,
+              const SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 0, 0, 5),
+                    child: Text(
+                      'Timings:',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      iconSize: 40,
-                      icon: const Icon(Icons.timer_rounded),
-                      onPressed: _timePicker,
-                      padding: const EdgeInsets.only(right: 20),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground
+                                .withOpacity(0.1),
+                            blurRadius: 2,
+                            offset: Offset(1, 1),
+                          ),
+                        ]
+                        // border: Border.all(
+                        //   width: 2,
+                        //   color: Theme.of(context).dividerColor,
+                        // ),
+                        ),
+                    child: ListTile(
+                      onTap: _timePicker,
+                      trailing: const Icon(Icons.access_time_rounded),
+                      title: Text(
+                        _selectedTime != null
+                            ? _selectedTime!.format(context)
+                            : widget.currentReminder != null
+                                ? widget.currentReminder!.format(context)
+                                : 'Set Timings',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      ),
                     ),
-                    Text(
-                      _selectedTime != null
-                          ? _selectedTime!.format(context)
-                          : widget.currentReminder != null
-                              ? widget.currentReminder!.format(context)
-                              : 'Set Timings',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              //   Row(
+              //     children: [
+              //       IconButton(
+              //
+              //         icon:
+
+              //         padding: const EdgeInsets.only(right: 20),
+              //       ),
+
+              //     ],
+              //   ),
+              // )
+
               const SizedBox(height: 20),
               OutlinedButton(
                 onPressed: () {

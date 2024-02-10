@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/screens/main/home_page.dart';
 import 'package:coin_sage/authentication/widgets/signup.dart';
 import 'package:coin_sage/authentication/widgets/signin.dart';
 import 'package:coin_sage/authentication/widgets/login_header.dart';
@@ -37,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(30),
+            padding: const EdgeInsets.all(30),
             alignment: Alignment.centerLeft,
             child: Column(
               children: [
@@ -46,16 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   subMessage: activeScreen == signin ? signinSub : signupSub,
                 ),
                 content,
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
-                      ),
-                    );
-                  },
-                  child: const Text('Home Page'),
-                )
               ],
             ),
           ),

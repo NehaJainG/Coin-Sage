@@ -1,5 +1,6 @@
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/services/room_repo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/screens/addnew/room.dart';
@@ -11,6 +12,11 @@ import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
 
 class UserRoomsScreen extends StatefulWidget {
+  const UserRoomsScreen({
+    super.key,
+    required this.user,
+  });
+  final User user;
   @override
   State<UserRoomsScreen> createState() => _UserRoomsScreenState();
 }
@@ -27,7 +33,7 @@ class _UserRoomsScreenState extends State<UserRoomsScreen> {
     userRooms = [];
 
     //fetching data here
-    final rooms = await roomCollection.getRooms();
+    final rooms = await roomCollection.getUserRooms(widget.user.email!);
 
     //reflecting data to ui here
     if (rooms != null) {
@@ -96,7 +102,7 @@ class _UserRoomsScreenState extends State<UserRoomsScreen> {
                 isScrollControlled: true,
                 context: context,
                 useSafeArea: true,
-                builder: (ctx) => AddRoomScreen(),
+                builder: (ctx) => AddRoomScreen(user: widget.user),
               );
             },
             icon: addIcon,

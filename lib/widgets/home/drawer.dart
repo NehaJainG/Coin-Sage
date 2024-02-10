@@ -34,7 +34,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: herodarkBlue.withOpacity(0.7),
+      color: heroBlue.withOpacity(0.7),
       padding: const EdgeInsets.only(top: 50, bottom: 50, left: 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,8 +43,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
           Row(
             children: [
               CircleAvatar(
-                child: person,
                 maxRadius: 30,
+                child: person,
               ),
               const SizedBox(width: 10),
               Column(

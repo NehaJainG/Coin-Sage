@@ -9,8 +9,8 @@ import 'package:coin_sage/screens/app_gate.dart';
 final customisedTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
-    brightness: Brightness.light,
-    seedColor: herodarkBlue,
+    brightness: Brightness.dark,
+    seedColor: heroBlue,
   ),
 
   //textTheme: GoogleFonts.poppinsTextTheme(),
@@ -19,7 +19,7 @@ final darkTheme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.dark,
-    seedColor: herodarkBlue,
+    seedColor: heroBlue,
   ),
 
   //textTheme: GoogleFonts.poppinsTextTheme(),
@@ -39,10 +39,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Your CoinSage',
+      title: 'Coin Sage',
       theme: customisedTheme,
       darkTheme: darkTheme,
-      home: AppGate(),
+      home: const AppGate(),
       debugShowCheckedModeBanner: false,
       // ,
     );

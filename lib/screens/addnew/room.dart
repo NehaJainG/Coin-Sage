@@ -1,5 +1,6 @@
 import 'package:coin_sage/services/room_repo.dart';
 import 'package:coin_sage/services/user_repo.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fs;
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/colors.dart';
@@ -10,7 +11,12 @@ import 'package:coin_sage/models/user.dart';
 import 'package:coin_sage/models/room.dart';
 
 class AddRoomScreen extends StatefulWidget {
-  const AddRoomScreen({super.key});
+  const AddRoomScreen({
+    super.key,
+    required this.user,
+  });
+
+  final fs.User user;
 
   @override
   State<AddRoomScreen> createState() => _AddRoomScreenState();
@@ -26,9 +32,15 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   String _errorMessage = '';
   bool validUser = true;
 
-  Future<List<User>> get users async {
-    final users = await userCollection.getAllUsers();
-    return users;
+  @override
+  void initState() {
+    addCurrentUser();
+    super.initState();
+  }
+
+  Future addCurrentUser() async {
+    final user = await userCollection.getUser(widget.user.email!);
+    members.add(user!);
   }
 
   void memberSearch() async {
@@ -41,7 +53,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
       if (newMember == null) {
         validUser = false;
         _errorMessage = 'Enter a valid user email';
-        print('invalid');
         _formKey.currentState!.validate();
         return;
       }
@@ -53,7 +64,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         },
       ).isNotEmpty) {
         validUser = false;
-        print('already');
         _errorMessage = 'User already added';
         _formKey.currentState!.validate();
         return;
@@ -61,7 +71,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
       //finally add user
       validUser = true;
-      print('valid');
       _formKey.currentState!.validate();
       setState(() {
         members.add(newMember);
@@ -71,7 +80,6 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
 
   void createRoom() async {
     if (!isNotValidTitle(_titleController.text) && members.isNotEmpty) {
-      print('here');
       //create data using room model
       Room room = Room(
         id: '',
@@ -79,7 +87,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         members: members.map((e) => e.email).toList(),
       );
       //add data to firestore
-      await roomRepo.addRoom(room);
+      await roomRepo.addRoom(room, widget.user.email!);
       showSnackBar('Created the room', context);
       Navigator.of(context).pop();
       return;
@@ -174,7 +182,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                   .onPrimaryContainer),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: members.length == 0
+                        child: members.length == 1
                             ? const Center(
                                 child: Text(
                                   'No members added yet',
@@ -186,7 +194,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    for (int index = 0;
+                                    for (int index = 1;
                                         index < members.length;
                                         index++)
                                       Container(

@@ -16,13 +16,11 @@ class TransactionRepository {
   }
 
   Future<List<app.Transaction>?> getTransactions(String userID) async {
-    final snapshot = await userDB.doc(userID).collection('transaction').get();
-    print('here');
-    print(snapshot);
+    final snapshot = await userDB.doc(userID).collection('transactions').get();
+
     final transactionData = snapshot.docs.map((e) {
-      print('2');
       final transactionType = e.data()['type'];
-      print(transactionType);
+
       if (transactionType == app.TransactionType.Expense.name) {
         return app.Expense.fromSnapshot(e);
       } else if (transactionType == app.TransactionType.Income.name) {

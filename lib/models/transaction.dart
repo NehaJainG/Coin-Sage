@@ -7,8 +7,13 @@ final dateFormatter = DateFormat.yMMMd();
 final timeFormatter = DateFormat.jm();
 
 TimeOfDay parseTimeOfDay(String t) {
-  DateTime dateTime = DateFormat("HH:mm aaa").parse(t);
-  return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+  print(t);
+  int hour = 0;
+  if (t.endsWith('pm')) {
+    hour = 12;
+  }
+  DateTime dateTime = DateFormat("HH:mm").parse(t);
+  return TimeOfDay(hour: dateTime.hour + hour, minute: dateTime.minute);
 }
 
 String timeFormat(TimeOfDay time) {

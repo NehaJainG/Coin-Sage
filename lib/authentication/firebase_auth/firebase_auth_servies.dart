@@ -18,13 +18,21 @@ class FirebaseAuthService {
         email: email,
         password: password,
       );
-      //save user info in user collection
+
+      //create a document in Request DB for the current user
+      final requests = _firestore.collection("Requests").doc();
+      //save user info with request id in user collection
       _firestore.collection('Users').doc(credential.user!.uid).set(
         {
           'email': email,
           'name': name,
+          'requestId': requests.id,
+          'roomId': [],
         },
       );
+
+      await credential.user?.updateDisplayName(name);
+
       return credential.user;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.code);

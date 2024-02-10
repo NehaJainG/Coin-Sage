@@ -1,26 +1,26 @@
-import 'package:coin_sage/services/transaction_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
-
-import 'package:coin_sage/widgets/home/drawer.dart';
 import 'package:coin_sage/screens/main/reminders.dart';
 import 'package:coin_sage/screens/room/user_rooms.dart';
 import 'package:coin_sage/screens/room/requests.dart';
-import 'package:coin_sage/screens/addnew/room.dart';
 import 'package:coin_sage/screens/addnew/transaction.dart';
+import 'package:coin_sage/screens/addnew/room.dart';
 
+import 'package:coin_sage/widgets/home/drawer.dart';
 import 'package:coin_sage/widgets/home/home_page_header.dart';
 import 'package:coin_sage/widgets/transaction/transaction_list.dart';
 
 import 'package:coin_sage/models/transaction.dart';
-
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
 
+import 'package:coin_sage/services/transaction_repo.dart';
+
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key, required this.user});
+
+  final User user;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,13 +28,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TransactionRepository transactionRepo = TransactionRepository();
+
   int _selectedPage = 0;
   double xOffset = 0;
   double yOffset = 0;
   double scaleFactor = 1;
   bool isDrawerOpen = false;
+  bool isLoading = false;
 
   List<Transaction> userTransaction = [];
+
+  late String name;
 
   @override
   void initState() {
@@ -43,16 +47,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getTransaction() async {
+    isLoading = true;
     userTransaction = [];
 
-    print('above');
     List<Transaction>? list =
-        await transactionRepo.getTransactions('YRO5kiuXM6XJU73ZJtdkDtsNxTo2');
+        await transactionRepo.getTransactions(widget.user.uid);
     if (list == null) {
       return;
     }
+
     setState(() {
       userTransaction.addAll(list);
+      isLoading = false;
     });
   }
 
@@ -75,9 +81,52 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _addNewTransaction() async {
+    final newTransaction = await Navigator.of(context).push<Transaction>(
+      MaterialPageRoute(
+        builder: (context) => AddTransactionScreen(user: widget.user),
+      ),
+    );
+    if (newTransaction == null) return;
+    setState(() {
+      userTransaction.add(newTransaction);
+    });
+  }
+
+  void _addNewRoom() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      useSafeArea: true,
+      builder: (ctx) => AddRoomScreen(user: widget.user),
+    );
+  }
+
+  void _viewRooms() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => UserRoomsScreen(user: widget.user),
+      ),
+    );
+  }
+
+  void _viewRequests() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => RequestScreen(user: widget.user)),
+    );
+  }
+
+  Widget viewReminders() {
+    return Reminders(
+      appBar: AppBar,
+      isDrawerOpen: isDrawerOpen,
+    );
+  }
+
   Widget get AppBar {
+    name = widget.user.displayName ?? 'User';
     return Container(
-      margin: EdgeInsets.fromLTRB(15, 10, 15, 0),
+      margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
       child: Row(
         children: [
           isDrawerOpen
@@ -94,16 +143,16 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Neha',
+                'Welcome',
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
+                      fontSize: 18,
                     ),
               ),
               Text(
-                'Welcome :)',
+                name,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 22,
                     ),
               ),
             ],
@@ -122,7 +171,7 @@ class _HomePageState extends State<HomePage> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(50),
+          bottom: const Radius.circular(50),
           top: Radius.circular(isDrawerOpen ? 20 : 0),
         ),
         boxShadow: [
@@ -149,47 +198,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _addNewTransaction() async {
-    final newTransaction = await Navigator.of(context).push<Transaction>(
-      MaterialPageRoute(
-        builder: (context) => const AddTransactionScreen(),
-      ),
-    );
-    if (newTransaction == null) return;
-    setState(() {
-      userTransaction.add(newTransaction);
-    });
-  }
-
-  void _addNewRoom() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      useSafeArea: true,
-      builder: (ctx) => const AddRoomScreen(),
-    );
-  }
-
-  void _viewRooms() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (ctx) => UserRoomsScreen(),
-      ),
-    );
-  }
-
-  void _viewRequests() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => RequestScreen()),
-    );
-  }
-
-  Widget viewReminders() {
-    return Reminders(
-      appBar: AppBar,
-    );
-  }
-
   Widget homePage() {
     return TransactionList(
       userTransactions: userTransaction,
@@ -207,23 +215,25 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          DrawerScreen(
-            userName: 'Neha Jain',
-            selectPage: selectPage,
-            closeDrawer: closeDrawer,
-            transaction: _addNewTransaction,
-            room: _viewRooms,
-          ),
-          AnimatedContainer(
-            transform: Matrix4.translationValues(xOffset, yOffset, 0)
-              ..scale(scaleFactor)
-              ..rotateY(isDrawerOpen ? -0.5 : 0),
-            duration: Duration(milliseconds: 250),
-            child: _selectedPage == 0 ? homePage() : Reminders(appBar: AppBar),
-          ),
-        ],
+      body: GestureDetector(
+        child: Stack(
+          children: [
+            DrawerScreen(
+              userName: widget.user.displayName ?? "User",
+              selectPage: selectPage,
+              closeDrawer: closeDrawer,
+              transaction: _addNewTransaction,
+              room: _viewRooms,
+            ),
+            AnimatedContainer(
+              transform: Matrix4.translationValues(xOffset, yOffset, 0)
+                ..scale(scaleFactor)
+                ..rotateY(isDrawerOpen ? -0.5 : 0),
+              duration: const Duration(milliseconds: 250),
+              child: _selectedPage == 0 ? homePage() : viewReminders(),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedPage,

@@ -1,12 +1,12 @@
 import 'package:coin_sage/defaults/colors.dart';
+import 'package:coin_sage/defaults/defaults.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/models/transaction.dart';
-import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/widgets/transaction/transaction_item.dart';
 
-class TransactionList extends StatelessWidget {
-  TransactionList({
+class TransactionList extends StatefulWidget {
+  const TransactionList({
     super.key,
     required this.userTransactions,
     required this.additionalContent,
@@ -17,8 +17,35 @@ class TransactionList extends StatelessWidget {
   final Widget? additionalContent;
 
   final bool isDrawerOpen;
-
   static ColorProvider colors = ColorProvider();
+
+  @override
+  State<TransactionList> createState() => _TransactionListState();
+}
+
+class _TransactionListState extends State<TransactionList> {
+  String month = 'Feb';
+
+  Future<String?> showMonthDialog() async {
+    final selectedMonth = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            // <-- SEE HERE
+            title: const Text('Select Month'),
+            children: <Widget>[
+              for (String monthStr in months)
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.of(context).pop(monthStr);
+                  },
+                  child: Text(monthStr),
+                ),
+            ],
+          );
+        });
+    return selectedMonth;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,28 +53,28 @@ class TransactionList extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         child: Text(
-          'No transactions found:)',
+          'No transactions found!',
           style: Theme.of(context).textTheme.titleLarge,
         ),
       ),
     );
 
-    if (userTransactions.isNotEmpty) {
+    if (widget.userTransactions.isNotEmpty) {
       transactionList = SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Display 2 items in a row
+          crossAxisCount: 1, // Display 1 items in a row
           crossAxisSpacing: 10,
-          mainAxisExtent: 140,
+          mainAxisExtent: 100,
           childAspectRatio: 6 / 4,
         ),
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index) {
             return TransactionItem(
-              transaction: userTransactions[index],
+              transaction: widget.userTransactions[index],
               index: index,
             );
           },
-          childCount: userTransactions.length,
+          childCount: widget.userTransactions.length,
         ),
       );
     }
@@ -55,7 +82,7 @@ class TransactionList extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
-        borderRadius: BorderRadius.circular(isDrawerOpen ? 20 : 0),
+        borderRadius: BorderRadius.circular(widget.isDrawerOpen ? 20 : 0),
         boxShadow: [
           BoxShadow(
             color: black,
@@ -68,7 +95,7 @@ class TransactionList extends StatelessWidget {
           //above content
           SliverToBoxAdapter(
             child: Container(
-              child: additionalContent ?? const SizedBox(),
+              child: widget.additionalContent ?? const SizedBox(),
             ),
           ),
 
@@ -76,11 +103,11 @@ class TransactionList extends StatelessWidget {
           SliverPersistentHeader(
             pinned: true,
             delegate: _SliverAppBarDelegate(
-              child: userTransactions.isEmpty
+              child: widget.userTransactions.isEmpty
                   ? const SizedBox()
                   : Container(
                       alignment: Alignment.centerLeft,
-                      padding: dePadding,
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.background,
                       ),
@@ -101,16 +128,31 @@ class TransactionList extends StatelessWidget {
                                   fontWeight: FontWeight.w400,
                                 ),
                           ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () async {
+                              final m = await showMonthDialog();
+                              setState(() {
+                                month = m ?? 'Feb';
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                Text(month),
+                                const Icon(Icons.arrow_drop_down_sharp)
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
               minHeight: 60.0,
-              maxHeight: 60.0,
+              maxHeight: 70.0,
             ),
           ),
 
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             sliver: transactionList,
           ),
         ],

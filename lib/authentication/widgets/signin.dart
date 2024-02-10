@@ -8,7 +8,7 @@ import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/strings.dart';
 
 class SignIn extends StatefulWidget {
-  SignIn({
+  const SignIn({
     super.key,
     required this.changeToSignup,
   });
@@ -35,7 +35,7 @@ class _SignInState extends State<SignIn> {
       if (user != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => HomePage(user: user),
           ),
         );
         return;

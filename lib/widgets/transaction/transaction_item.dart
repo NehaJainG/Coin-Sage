@@ -28,14 +28,12 @@ class _TransactionItemState extends State<TransactionItem> {
   Widget build(BuildContext context) {
     Transaction transaction = widget.transaction;
     return Container(
-      margin: const EdgeInsets.fromLTRB(3, 10, 3, 10),
+      margin: const EdgeInsets.fromLTRB(3, 6, 3, 6),
       padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 8,
+        horizontal: 14,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colors.colorPalette[index], width: 3),
         color: colors.colorPalette[index],
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -72,19 +70,18 @@ class _TransactionItemState extends State<TransactionItem> {
                         color: colors.widgetColors['text'],
                       ),
                 ),
-                Text(
-                  '₹ ${transaction.amount}',
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        fontSize: 18,
-                        color: transaction.type == TransactionType.Income
-                            ? green
-                            : red,
-                      ),
-                ),
                 Text(dateFormatter.format(transaction.date))
               ],
             ),
-          )
+          ),
+          Text(
+            '₹ ${transaction.amount}',
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                  fontSize: 18,
+                  color:
+                      transaction.type == TransactionType.Income ? green : red,
+                ),
+          ),
         ],
       ),
     );

@@ -11,10 +11,14 @@ class Room {
   final String title;
   List<String>? members;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(String userEmail) {
     return {
       'title': title,
-      'members': members,
+      'members': [
+        userEmail,
+      ],
+      'requestMembers':
+          members!.where((element) => element != userEmail).toList(),
     };
   }
 

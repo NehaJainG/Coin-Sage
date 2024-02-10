@@ -8,7 +8,10 @@ import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/strings.dart';
 
 class SignUp extends StatefulWidget {
-  SignUp({super.key, required this.changeToSignin});
+  const SignUp({
+    super.key,
+    required this.changeToSignin,
+  });
 
   final void Function(String) changeToSignin;
 
@@ -145,7 +148,7 @@ class _SignUpState extends State<SignUp> {
       print("User is successfully created");
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => HomePage(user: user),
         ),
       );
     } else {

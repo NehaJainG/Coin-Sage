@@ -63,7 +63,19 @@ void showSnackBar(String message, BuildContext context) {
           style: Theme.of(context).textTheme.labelLarge!.copyWith(
                 color: Colors.white,
               )),
-      backgroundColor: herodarkBlue.withOpacity(0.7),
+      backgroundColor: heroBlue.withOpacity(0.7),
     ),
   );
 }
+
+List<String> months = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'June',
+  'July',
+  'Aug',
+  'Sep',
+];
