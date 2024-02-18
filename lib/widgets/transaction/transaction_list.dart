@@ -10,11 +10,13 @@ class TransactionList extends StatefulWidget {
     super.key,
     required this.userTransactions,
     required this.additionalContent,
+    required this.appBar,
     required this.isDrawerOpen,
   });
 
   final List<Transaction> userTransactions;
   final Widget? additionalContent;
+  final Widget? appBar;
 
   final bool isDrawerOpen;
   static ColorProvider colors = ColorProvider();
@@ -24,7 +26,23 @@ class TransactionList extends StatefulWidget {
 }
 
 class _TransactionListState extends State<TransactionList> {
-  String month = 'Feb';
+  String month = months[DateTime.now().month]!;
+
+  late List<Transaction> monthWiseTransaction;
+
+  void onChangeOfMonth() {
+    monthWiseTransaction = widget.userTransactions
+        .where((element) => months[element.date.month]! == month)
+        .toList();
+  }
+
+  @override
+  void initState() {
+    monthWiseTransaction = widget.userTransactions
+        .where((element) => months[element.date.month]! == month)
+        .toList();
+    super.initState();
+  }
 
   Future<String?> showMonthDialog() async {
     final selectedMonth = await showDialog<String>(
@@ -34,7 +52,7 @@ class _TransactionListState extends State<TransactionList> {
             // <-- SEE HERE
             title: const Text('Select Month'),
             children: <Widget>[
-              for (String monthStr in months)
+              for (String monthStr in months.values)
                 SimpleDialogOption(
                   onPressed: () {
                     Navigator.of(context).pop(monthStr);
@@ -59,7 +77,7 @@ class _TransactionListState extends State<TransactionList> {
       ),
     );
 
-    if (widget.userTransactions.isNotEmpty) {
+    if (monthWiseTransaction.isNotEmpty) {
       transactionList = SliverGrid(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1, // Display 1 items in a row
@@ -70,11 +88,11 @@ class _TransactionListState extends State<TransactionList> {
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index) {
             return TransactionItem(
-              transaction: widget.userTransactions[index],
+              transaction: monthWiseTransaction[index],
               index: index,
             );
           },
-          childCount: widget.userTransactions.length,
+          childCount: monthWiseTransaction.length,
         ),
       );
     }
@@ -92,6 +110,14 @@ class _TransactionListState extends State<TransactionList> {
       ),
       child: CustomScrollView(
         slivers: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _SliverAppBarDelegate(
+              minHeight: 100,
+              maxHeight: 100,
+              child: widget.appBar ?? SizedBox(),
+            ),
+          ),
           //above content
           SliverToBoxAdapter(
             child: Container(
@@ -133,7 +159,8 @@ class _TransactionListState extends State<TransactionList> {
                             onPressed: () async {
                               final m = await showMonthDialog();
                               setState(() {
-                                month = m ?? 'Feb';
+                                month = m ?? month;
+                                onChangeOfMonth();
                               });
                             },
                             child: Row(

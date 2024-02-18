@@ -8,7 +8,6 @@ import 'package:coin_sage/screens/addnew/transaction.dart';
 import 'package:coin_sage/screens/addnew/room.dart';
 
 import 'package:coin_sage/widgets/home/drawer.dart';
-import 'package:coin_sage/widgets/home/home_page_header.dart';
 import 'package:coin_sage/widgets/transaction/transaction_list.dart';
 
 import 'package:coin_sage/models/transaction.dart';
@@ -27,8 +26,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TransactionRepository transactionRepo = TransactionRepository();
-
   int _selectedPage = 0;
   double xOffset = 0;
   double yOffset = 0;
@@ -48,16 +45,17 @@ class _HomePageState extends State<HomePage> {
 
   void getTransaction() async {
     isLoading = true;
-    userTransaction = [];
-
+    print('before');
     List<Transaction>? list =
-        await transactionRepo.getTransactions(widget.user.uid);
+        await TransactionRepository.getTransactions(widget.user.uid);
     if (list == null) {
       return;
     }
-
+    userTransaction = [];
+    print('after');
     setState(() {
       userTransaction.addAll(list);
+      userTransaction.sort((a, b) => b.date.compareTo(a.date));
       isLoading = false;
     });
   }
@@ -84,13 +82,23 @@ class _HomePageState extends State<HomePage> {
   void _addNewTransaction() async {
     final newTransaction = await Navigator.of(context).push<Transaction>(
       MaterialPageRoute(
-        builder: (context) => AddTransactionScreen(user: widget.user),
+        builder: (context) => const AddTransactionScreen(),
       ),
     );
     if (newTransaction == null) return;
+
     setState(() {
       userTransaction.add(newTransaction);
     });
+
+    if (newTransaction.type == TransactionType.Debt ||
+        newTransaction.type == TransactionType.Subcriptions) {
+      await TransactionRepository.addReminders(newTransaction, widget.user.uid);
+    } else {
+      await TransactionRepository.addTransaction(
+          newTransaction, widget.user.uid);
+    }
+    getTransaction();
   }
 
   void _addNewRoom() {
@@ -120,49 +128,49 @@ class _HomePageState extends State<HomePage> {
     return Reminders(
       appBar: AppBar,
       isDrawerOpen: isDrawerOpen,
+      user: widget.user,
     );
   }
 
-  Widget get AppBar {
+  Widget AppBar(void Function()? onRefresh) {
     name = widget.user.displayName ?? 'User';
+    name = name.split(' ')[0];
     return Container(
-      margin: const EdgeInsets.fromLTRB(15, 10, 15, 0),
-      child: Row(
-        children: [
-          isDrawerOpen
-              ? IconButton(
-                  icon: backIcon,
-                  onPressed: closeDrawer,
-                )
-              : IconButton(
-                  icon: menuIcon,
-                  onPressed: openDrawer,
-                ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Welcome',
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontSize: 18,
-                    ),
-              ),
-              Text(
-                name,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                    ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          IconButton(
-            onPressed: getTransaction,
-            icon: refreshIcon,
-          ),
-        ],
+      decoration: BoxDecoration(
+        color: blackBlue,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(isDrawerOpen ? 20 : 0),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+      child: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            isDrawerOpen
+                ? IconButton(
+                    icon: backIcon,
+                    onPressed: closeDrawer,
+                  )
+                : IconButton(
+                    icon: menuIcon,
+                    onPressed: openDrawer,
+                  ),
+            const SizedBox(width: 12),
+            Text(
+              'Heyy $name',
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 24,
+                  ),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: onRefresh,
+              icon: refreshIcon,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -170,10 +178,7 @@ class _HomePageState extends State<HomePage> {
   Widget get fixedContent {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(
-          bottom: const Radius.circular(50),
-          top: Radius.circular(isDrawerOpen ? 20 : 0),
-        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(50)),
         boxShadow: [
           BoxShadow(
             color: lightGrey.withOpacity(0.7),
@@ -182,18 +187,12 @@ class _HomePageState extends State<HomePage> {
         ],
         color: blackBlue,
       ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            AppBar,
-            HomeHeader(
-              newTransaction: _addNewTransaction,
-              newRoom: _addNewRoom,
-              allRooms: _viewRooms,
-              viewRequest: _viewRequests,
-            ),
-          ],
-        ),
+      child: const Column(
+        children: [
+          SizedBox(
+            height: 300,
+          ),
+        ],
       ),
     );
   }
@@ -202,6 +201,7 @@ class _HomePageState extends State<HomePage> {
     return TransactionList(
       userTransactions: userTransaction,
       additionalContent: fixedContent,
+      appBar: AppBar(getTransaction),
       isDrawerOpen: isDrawerOpen,
     );
   }
@@ -224,6 +224,7 @@ class _HomePageState extends State<HomePage> {
               closeDrawer: closeDrawer,
               transaction: _addNewTransaction,
               room: _viewRooms,
+              requests: _viewRequests,
             ),
             AnimatedContainer(
               transform: Matrix4.translationValues(xOffset, yOffset, 0)

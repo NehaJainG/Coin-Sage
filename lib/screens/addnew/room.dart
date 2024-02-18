@@ -23,8 +23,6 @@ class AddRoomScreen extends StatefulWidget {
 }
 
 class _AddRoomScreenState extends State<AddRoomScreen> {
-  UserRepo userCollection = UserRepo();
-  RoomRepositories roomRepo = RoomRepositories();
   final _memberController = TextEditingController();
   final _titleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -39,7 +37,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
   }
 
   Future addCurrentUser() async {
-    final user = await userCollection.getUser(widget.user.email!);
+    final user = await UserRepo.getUser(widget.user.email!);
     members.add(user!);
   }
 
@@ -47,7 +45,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
     //validating if user with given email exists
     if (_memberController.text.isNotEmpty ||
         isValidEmail(_memberController.text)) {
-      User? newMember = await userCollection.getUser(_memberController.text);
+      User? newMember = await UserRepo.getUser(_memberController.text);
 
       //Does user's email given is valid?
       if (newMember == null) {
@@ -87,7 +85,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         members: members.map((e) => e.email).toList(),
       );
       //add data to firestore
-      await roomRepo.addRoom(room, widget.user.email!);
+      await RoomRepositories.addRoom(room, widget.user.email!);
       showSnackBar('Created the room', context);
       Navigator.of(context).pop();
       return;
@@ -105,7 +103,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
         return SizedBox(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 40, 20, keyboardSpace + 50),
+              padding: EdgeInsets.fromLTRB(20.0, 40, 20, keyboardSpace + 20),
               child: Form(
                 key: _formKey,
                 child: SizedBox(
@@ -153,7 +151,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                             child: TextFormField(
                               controller: _memberController,
                               decoration: inputDecor(
-                                'Member',
+                                'Invite a member',
                                 addMemberIcon,
                                 null,
                                 'Enter member\'s email',
@@ -166,6 +164,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                           IconButton(
                             onPressed: memberSearch,
                             icon: searchMemberIcon,
+                            tooltip: 'Search member',
                           ),
                         ],
                       ),
@@ -194,17 +193,21 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
+                                    const Text('Members: '),
+                                    const SizedBox(height: 10),
                                     for (int index = 1;
                                         index < members.length;
                                         index++)
                                       Container(
-                                        margin: EdgeInsets.only(bottom: 15),
+                                        margin:
+                                            const EdgeInsets.only(bottom: 15),
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: lightGrey),
+                                          color: lightBlue.withOpacity(0.75),
                                           borderRadius:
-                                              BorderRadius.circular(20),
+                                              BorderRadius.circular(8),
                                         ),
                                         child: ListTile(
+                                          //textColor: black,
                                           title: Text(members[index].name),
                                           trailing: IconButton(
                                             icon: Icon(Icons.close),
@@ -221,9 +224,17 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                               ),
                       ),
                       const SizedBox(height: 20),
-                      FloatingActionButton.extended(
-                        onPressed: createRoom,
-                        label: const Text('Create Room'),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 30),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.scrim,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: TextButton(
+                          onPressed: createRoom,
+                          child: const Text('Create Room'),
+                        ),
                       ),
                     ],
                   ),

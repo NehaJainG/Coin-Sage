@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coin_sage/defaults/strings.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
@@ -79,14 +80,53 @@ enum SubscriptionCategory {
   Other,
 }
 
+enum Reminder {
+  OnDay,
+  OneDayBefore,
+  TwoDayBefore,
+  FiveDayBefore,
+}
+
+enum Repeat {
+  DontRepeat,
+  Week,
+  Month,
+  Year,
+}
+
+Reminder? getReminderType(String? value) {
+  if (value == null) return null;
+  for (var entry in reminderStr.entries) {
+    if (entry.value == value) {
+      return entry.key;
+    }
+  }
+  return null;
+}
+
+Repeat? getRepeatType(String? value) {
+  if (value == null) return null;
+  for (var entry in repeatStr.entries) {
+    if (entry.value == value) {
+      return entry.key;
+    }
+  }
+  return null;
+}
+
 class Transaction {
+  final String id;
   final double amount;
   final DateTime date;
   final String comments;
   final TransactionType type;
   final dynamic category; // Use dynamic for flexibility
+  DateTime? dueDate;
+  TimeOfDay? reminderTime;
+  Repeat? repeat;
 
   Transaction({
+    required this.id,
     required this.amount,
     required this.date,
     required this.comments,
@@ -104,20 +144,18 @@ class Transaction {
         'category': category,
         'date': dateFormatter.format(date),
       };
+  Map<String, dynamic> toReminderJson() => {};
 }
 
 class Expense extends Transaction {
   Expense({
-    required double amount,
-    required DateTime date,
-    required String comments,
-    required ExpenseCategory category,
+    required super.amount,
+    required super.date,
+    required super.comments,
+    required super.id,
+    required ExpenseCategory super.category,
   }) : super(
-          amount: amount,
-          date: date,
-          comments: comments,
           type: TransactionType.Expense,
-          category: category,
         );
 
   factory Expense.fromSnapshot(
@@ -130,6 +168,7 @@ class Expense extends Transaction {
       }
     }
     return Expense(
+      id: document.id,
       amount: data['amount'],
       date: dateFormatter.parse(data['date']),
       comments: data['comments'],
@@ -156,17 +195,14 @@ class Income extends Transaction {
   final bool isSteady;
 
   Income({
-    required double amount,
-    required DateTime date,
-    required String comments,
-    required IncomeCategory category,
+    required super.amount,
+    required super.date,
+    required super.comments,
+    required IncomeCategory super.category,
     required this.isSteady,
+    required super.id,
   }) : super(
-          amount: amount,
-          date: date,
-          comments: comments,
           type: TransactionType.Income,
-          category: category,
         );
 
   factory Income.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
@@ -178,6 +214,7 @@ class Income extends Transaction {
       }
     }
     return Income(
+      id: document.id,
       amount: data['amount'],
       date: dateFormatter.parse(data['date']),
       comments: data['comments'],
@@ -197,45 +234,51 @@ class Income extends Transaction {
         'comments': comments,
         'type': type.name,
         'category': categoryName,
-        'date': dateFormatter.format(date),
+        'date': dateFormatter.format(DateTime.now()),
         'isSteady': isSteady,
       };
 }
 
 class Debt extends Transaction {
-  final DateTime returnDate;
+  final DateTime dueDate;
   final TimeOfDay reminderTime;
+  Reminder? reminderType;
+  Repeat? repeat;
 
   Debt({
-    required double amount,
-    required DateTime date,
-    required String comments,
-    required DebtCategory category,
-    required this.returnDate,
+    required super.amount,
+    required super.id,
+    required super.date,
+    required super.comments,
+    required DebtCategory super.category,
+    required this.dueDate,
     required this.reminderTime,
+    this.reminderType,
+    this.repeat,
   }) : super(
-          amount: amount,
-          date: date,
-          comments: comments,
           type: TransactionType.Debt,
-          category: category,
         );
 
   factory Debt.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
-    var cate;
+    dynamic categ;
     for (DebtCategory categories in DebtCategory.values) {
       if (categories.name == data['category']) {
-        cate = categories;
+        categ = categories;
       }
     }
+    print('here');
+
     return Debt(
+      id: document.id,
       amount: data['amount'],
       date: dateFormatter.parse(data['date']),
       comments: data['comments'],
-      category: cate,
-      returnDate: dateFormatter.parse(data['returnDate']),
+      category: categ,
+      dueDate: dateFormatter.parse(data['dueDate'] ?? data['returnDate']),
       reminderTime: parseTimeOfDay(data['reminderTime']),
+      reminderType: getReminderType(data['reminderType']),
+      repeat: getRepeatType(data['repeatType']),
     );
   }
 
@@ -250,47 +293,64 @@ class Debt extends Transaction {
         'comments': comments,
         'type': type.name,
         'category': categoryName,
-        'date': dateFormatter.format(date),
-        'returnDate': dateFormatter.format(returnDate),
+        'date': dateFormatter.format(DateTime.now()),
+        'dueDate': dateFormatter.format(dueDate),
         'reminderTime': timeFormat(reminderTime),
+      };
+  @override
+  Map<String, dynamic> toReminderJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': categoryName,
+        'date': dateFormatter.format(DateTime.now()),
+        'dueDate': dateFormatter.format(dueDate),
+        'reminderTime': timeFormat(reminderTime),
+        'reminderType': reminderStr[reminderType],
+        'repeatType': repeatStr[repeat],
       };
 }
 
 class Subscription extends Transaction {
   final DateTime dueDate;
   final TimeOfDay reminderTime;
+  Reminder? reminderType;
+  Repeat? repeat;
 
   Subscription({
-    required double amount,
-    required DateTime date,
-    required String comments,
-    required SubscriptionCategory category,
+    required super.amount,
+    required super.id,
+    required super.date,
+    required super.comments,
+    required SubscriptionCategory super.category,
     required this.dueDate,
     required this.reminderTime,
+    this.reminderType,
+    this.repeat,
   }) : super(
-          amount: amount,
-          date: date,
-          comments: comments,
           type: TransactionType.Subcriptions,
-          category: category,
         );
 
   factory Subscription.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
-    var cate;
+    dynamic categ;
     for (SubscriptionCategory categories in SubscriptionCategory.values) {
       if (categories.name == data['category']) {
-        cate = categories;
+        categ = categories;
       }
     }
+
     return Subscription(
+      id: document.id,
       amount: data['amount'],
       date: dateFormatter.parse(data['date']),
       comments: data['comments'],
-      category: cate,
+      category: categ,
       dueDate: dateFormatter.parse(data['dueDate']),
       reminderTime: parseTimeOfDay(data['reminderTime']),
+      reminderType: getReminderType(data['reminderType']),
+      repeat: getRepeatType(data['repeatType']),
     );
   }
 
@@ -305,8 +365,20 @@ class Subscription extends Transaction {
         'comments': comments,
         'type': type.name,
         'category': categoryName,
-        'date': dateFormatter.format(date),
+        'date': dateFormatter.format(DateTime.now()),
         'dueDate': dateFormatter.format(dueDate),
         'reminderTime': timeFormat(reminderTime),
+      };
+  @override
+  Map<String, dynamic> toReminderJson() => {
+        'amount': amount,
+        'comments': comments,
+        'type': type.name,
+        'category': categoryName,
+        'date': dateFormatter.format(DateTime.now()),
+        'dueDate': dateFormatter.format(dueDate),
+        'reminderTime': timeFormat(reminderTime),
+        'reminderType': reminderStr[reminderType],
+        'repeatType': repeatStr[repeat],
       };
 }

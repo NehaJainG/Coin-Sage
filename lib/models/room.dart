@@ -19,6 +19,7 @@ class Room {
       ],
       'requestMembers':
           members!.where((element) => element != userEmail).toList(),
+      'totalCost ': 0,
     };
   }
 

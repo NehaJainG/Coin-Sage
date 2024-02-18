@@ -21,9 +21,6 @@ class RequestScreen extends StatefulWidget {
 }
 
 class _RequestScreenState extends State<RequestScreen> {
-  RoomRepositories roomRepo = RoomRepositories();
-  UserRepo userRepo = UserRepo();
-
   List<Room>? roomRequest;
   bool isLoading = false;
 
@@ -38,7 +35,8 @@ class _RequestScreenState extends State<RequestScreen> {
       isLoading = true;
     });
     print(widget.user.email);
-    final requests = await roomRepo.getRoomsRequests(widget.user.email!);
+    final requests =
+        await RoomRepositories.getRoomsRequests(widget.user.email!);
     setState(() {
       roomRequest = requests;
       isLoading = false;
@@ -46,8 +44,8 @@ class _RequestScreenState extends State<RequestScreen> {
   }
 
   void acceptRequest(Room room, int index) {
-    userRepo.addRoomId(widget.user.email!, room.id!);
-    userRepo.removeRequestId(widget.user.email!, room.id!);
+    UserRepo.addRoomId(widget.user.email!, room.id!);
+    UserRepo.removeRequestId(widget.user.email!, room.id!);
     setState(() {
       roomRequest!.remove(room);
     });
@@ -70,7 +68,7 @@ class _RequestScreenState extends State<RequestScreen> {
   }
 
   void declineRequest(Room room, int index) {
-    userRepo.removeRequestId(widget.user.email!, room.id!);
+    UserRepo.removeRequestId(widget.user.email!, room.id!);
     setState(() {
       roomRequest!.remove(room);
     });
@@ -169,7 +167,7 @@ class _RequestScreenState extends State<RequestScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: roomRepo.roomDB.snapshots(),
+        stream: RoomRepositories.roomDB.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Show circular progress while loading

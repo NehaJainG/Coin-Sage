@@ -23,7 +23,7 @@ class UserRoomsScreen extends StatefulWidget {
 
 class _UserRoomsScreenState extends State<UserRoomsScreen> {
   bool isLoading = true;
-  RoomRepositories roomCollection = RoomRepositories();
+
   List<Room> userRooms = [];
   Future getRoomList() async {
     //initial setup whenever loading data
@@ -33,7 +33,7 @@ class _UserRoomsScreenState extends State<UserRoomsScreen> {
     userRooms = [];
 
     //fetching data here
-    final rooms = await roomCollection.getUserRooms(widget.user.email!);
+    final rooms = await RoomRepositories.getUserRooms(widget.user.email!);
 
     //reflecting data to ui here
     if (rooms != null) {
@@ -67,6 +67,7 @@ class _UserRoomsScreenState extends State<UserRoomsScreen> {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (ctx) => RoomDetailsScreen(
                   room: userRooms[index],
+                  user: widget.user,
                 ),
               ));
             },
@@ -116,7 +117,7 @@ class _UserRoomsScreenState extends State<UserRoomsScreen> {
         ],
       ),
       body: StreamBuilder(
-          stream: roomCollection.roomDB.snapshots(),
+          stream: RoomRepositories.roomDB.snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData || isLoading) {
               return circularProgress;

@@ -1,5 +1,5 @@
-import 'package:coin_sage/services/transaction_repo.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:coin_sage/defaults/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
@@ -8,10 +8,11 @@ import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/models/transaction.dart';
 
 class AddTransactionScreen extends StatefulWidget {
-  const AddTransactionScreen({super.key, required this.user});
+  const AddTransactionScreen({
+    super.key,
+  });
   final TransactionType type = TransactionType.Expense;
 
-  final User user;
   @override
   State<AddTransactionScreen> createState() {
     return _AddTransactionScreenState();
@@ -19,7 +20,7 @@ class AddTransactionScreen extends StatefulWidget {
 }
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
-  final TransactionRepository transRepo = TransactionRepository();
+  //final TransactionRepository transRepo = TransactionRepository();
   late TransactionType selectedtype;
   late List<DropdownMenuItem> dropdownItems;
   dynamic _selectedCategory;
@@ -29,6 +30,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   double _enteredAmount = 0;
   DateTime? _dueDate;
   TimeOfDay? _reminder;
+  Reminder? reminderType;
+  Repeat? repeatType;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -115,12 +118,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         .toList();
   }
 
-  void saveTransaction() async {
+  void saveTransaction() {
     Transaction? newTransaction;
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       if (selectedtype == TransactionType.Expense) {
         newTransaction = Expense(
+          id: 'id',
           amount: _enteredAmount,
           date: _selectedDate,
           comments: _enteredComment ?? '',
@@ -128,6 +132,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         );
       } else if (selectedtype == TransactionType.Income) {
         newTransaction = Income(
+          id: 'id',
           amount: _enteredAmount,
           date: _selectedDate,
           comments: _enteredComment ?? '',
@@ -137,12 +142,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       } else if (selectedtype == TransactionType.Debt) {
         if (_dueDate != null) {
           newTransaction = Debt(
+            id: 'id',
             amount: _enteredAmount,
             date: _selectedDate,
             comments: _enteredComment ?? '',
             category: _finalCategory,
-            returnDate: _dueDate!,
+            dueDate: _dueDate!,
             reminderTime: _reminder ?? TimeOfDay.now(),
+            reminderType: reminderType ?? Reminder.OneDayBefore,
+            repeat: repeatType ?? Repeat.DontRepeat,
           );
         } else {
           showSnackBar('Please add Return date of the Debt', context);
@@ -151,28 +159,31 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       } else {
         if (_dueDate != null) {
           newTransaction = Subscription(
+            id: 'id',
             amount: _enteredAmount,
             date: _selectedDate,
             comments: _enteredComment ?? '',
             category: _finalCategory,
             dueDate: _dueDate!,
             reminderTime: _reminder ?? TimeOfDay.now(),
+            reminderType: reminderType ?? Reminder.OneDayBefore,
+            repeat: repeatType ?? Repeat.DontRepeat,
           );
         } else {
           showSnackBar('Please add Due date of the subscription', context);
+          return;
         }
       }
-
-      final data =
-          await transRepo.addTransaction(newTransaction!, widget.user.uid);
-      print(data);
       Navigator.of(context).pop<Transaction>(newTransaction);
     }
   }
 
-  void setReminderPara(TimeOfDay? userReminder) {
+  void setReminderPara(
+      TimeOfDay? userReminder, Reminder? reminder, Repeat? repeat) {
     setState(() {
       _reminder = userReminder;
+      reminderType = reminder;
+      repeatType = repeat;
     });
   }
 
@@ -199,6 +210,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       builder: (ctx) => SetReminder(
         onAddReminder: setReminderPara,
         currentReminder: _reminder,
+        currentRepeatType: repeatType,
+        currentReminderType: reminderType,
       ),
     );
   }
@@ -398,11 +411,23 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
 // ignore: must_be_immutable
 class SetReminder extends StatefulWidget {
-  SetReminder(
-      {super.key, required this.onAddReminder, required this.currentReminder});
+  SetReminder({
+    super.key,
+    required this.onAddReminder,
+    required this.currentReminder,
+    required this.currentReminderType,
+    required this.currentRepeatType,
+  });
 
-  final void Function(TimeOfDay?) onAddReminder;
+  final void Function(
+    TimeOfDay?,
+    Reminder?,
+    Repeat?,
+  ) onAddReminder;
   TimeOfDay? currentReminder;
+  Reminder? currentReminderType;
+  Repeat? currentRepeatType;
+
   @override
   State<SetReminder> createState() {
     return _SetReminderState();
@@ -411,6 +436,17 @@ class SetReminder extends StatefulWidget {
 
 class _SetReminderState extends State<SetReminder> {
   TimeOfDay? _selectedTime;
+  Reminder? _reminder;
+  Repeat? _repeat;
+
+  @override
+  void initState() {
+    _selectedTime = widget.currentReminder;
+    _reminder = widget.currentReminderType;
+    _repeat = widget.currentRepeatType;
+    super.initState();
+  }
+
   void _timePicker() async {
     final selectedTime = await showTimePicker(
       initialTime: TimeOfDay.now(),
@@ -420,23 +456,74 @@ class _SetReminderState extends State<SetReminder> {
     if (selectedTime == null) return;
 
     setState(() {
+      print(selectedTime);
       _selectedTime = selectedTime;
+    });
+  }
+
+  void showRepeatDialog() async {
+    final selectedRepeat = await showDialog<Repeat>(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          // <-- SEE HERE
+          title: const Text('Repeat'),
+          children: <Widget>[
+            for (var repeaStr in repeatStr.entries)
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.of(context).pop(repeaStr.key);
+                },
+                child: Text(repeaStr.value),
+              ),
+          ],
+        );
+      },
+    );
+    if (selectedRepeat == null) return;
+    setState(() {
+      _repeat = selectedRepeat;
+    });
+  }
+
+  void showReminderDialog() async {
+    final selectedReminder = await showDialog<Reminder>(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          // <-- SEE HERE
+          title: const Text('Alert Before'),
+          children: <Widget>[
+            for (var remindStr in reminderStr.entries)
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.of(context).pop(remindStr.key);
+                },
+                child: Text(remindStr.value),
+              ),
+          ],
+        );
+      },
+    );
+    if (selectedReminder == null) return;
+    setState(() {
+      _reminder = selectedReminder;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_selectedTime == null) {
-      setState(() {
-        _selectedTime = widget.currentReminder;
-      });
-    }
     return LayoutBuilder(builder: (context, constraints) {
       return SingleChildScrollView(
         child: Container(
-          color: Theme.of(context).colorScheme.background.withOpacity(.8),
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
           width: double.infinity,
-          padding: const EdgeInsets.all(30),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(30),
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -453,76 +540,53 @@ class _SetReminderState extends State<SetReminder> {
                   exitButton(context),
                 ],
               ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12.0, 0, 0, 5),
-                    child: Text(
-                      'Timings:',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onBackground
-                                .withOpacity(0.1),
-                            blurRadius: 2,
-                            offset: Offset(1, 1),
-                          ),
-                        ]
-                        // border: Border.all(
-                        //   width: 2,
-                        //   color: Theme.of(context).dividerColor,
-                        // ),
-                        ),
-                    child: ListTile(
-                      onTap: _timePicker,
-                      trailing: const Icon(Icons.access_time_rounded),
-                      title: Text(
-                        _selectedTime != null
-                            ? _selectedTime!.format(context)
-                            : widget.currentReminder != null
-                                ? widget.currentReminder!.format(context)
-                                : 'Set Timings',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                ],
+              //const Divider(),
+              ListTile(
+                onTap: _timePicker,
+                leading: const Icon(Icons.access_time_rounded),
+                title: Text(
+                  _selectedTime != null
+                      ? _selectedTime!.format(context)
+                      : widget.currentReminder != null
+                          ? widget.currentReminder!.format(context)
+                          : 'Set Timings',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
               ),
-              //   Row(
-              //     children: [
-              //       IconButton(
-              //
-              //         icon:
-
-              //         padding: const EdgeInsets.only(right: 20),
-              //       ),
-
-              //     ],
-              //   ),
-              // )
-
-              const SizedBox(height: 20),
-              OutlinedButton(
+              const Divider(),
+              ListTile(
+                onTap: showReminderDialog,
+                leading: const Icon(Icons.notifications_none_rounded),
+                title: Text(
+                  reminderStr[_reminder] ?? reminderStr[Reminder.OneDayBefore]!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                onTap: showRepeatDialog,
+                leading: const Icon(Icons.repeat_rounded),
+                title: Text(
+                  repeatStr[_repeat] ?? repeatStr[Repeat.DontRepeat]!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              TextButton(
                 onPressed: () {
                   print(_selectedTime);
-                  widget.onAddReminder(_selectedTime);
+                  widget.onAddReminder(_selectedTime, _reminder, _repeat);
                   Navigator.of(context).pop();
                 },
-                child: const Text('Add Reminder'),
+                child: const Text('Save'),
               ),
             ],
           ),

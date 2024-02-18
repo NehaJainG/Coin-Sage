@@ -11,6 +11,8 @@ Icon menuIcon = const Icon(
   size: 40,
 );
 
+Icon payment = const Icon(Icons.payment_outlined);
+
 Icon backIcon = const Icon(Icons.arrow_back_ios);
 
 //add new room icons
@@ -85,5 +87,5 @@ const drawerItems = {
   'Reminder': Icon(Icons.notifications_active),
   'Transaction': Icon(Icons.currency_exchange),
   'All Rooms': Icon(Icons.groups),
-  'Favorites': Icon(Icons.favorite),
+  'Requests': Icon(Icons.favorite),
 };

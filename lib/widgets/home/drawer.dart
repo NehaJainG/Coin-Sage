@@ -5,19 +5,21 @@ import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 
 class DrawerScreen extends StatefulWidget {
-  DrawerScreen({
+  const DrawerScreen({
     super.key,
     required this.userName,
     required this.closeDrawer,
     required this.transaction,
     required this.room,
     required this.selectPage,
+    required this.requests,
   });
   final String userName;
   final void Function() closeDrawer;
   final void Function() transaction;
   final void Function() room;
   final void Function(int) selectPage;
+  final void Function() requests;
 
   @override
   State<DrawerScreen> createState() => _DrawerScreenState();
@@ -82,6 +84,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                           widget.selectPage(0);
                         } else if (element.key == 'Reminder') {
                           widget.selectPage(1);
+                        } else if (element.key == 'Requests') {
+                          widget.requests();
                         }
                       },
                       title: Text(

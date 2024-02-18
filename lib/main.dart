@@ -1,3 +1,4 @@
+import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +31,8 @@ Future main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  PushNotifications.requestNotificationPermission();
   runApp(const MyApp());
 }
 

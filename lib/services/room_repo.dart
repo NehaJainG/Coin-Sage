@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:coin_sage/models/room.dart';
+import 'package:coin_sage/models/transaction.dart' as app;
 import 'package:coin_sage/services/user_repo.dart';
 
 class RoomRepositories {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  CollectionReference<Map<String, dynamic>> get roomDB =>
+  static final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static CollectionReference<Map<String, dynamic>> get roomDB =>
       _db.collection("Rooms");
-  UserRepo userRepo = UserRepo();
 
   //to get all rooms
-  Future<List<Room>?> getUserRooms(String email) async {
+  static Future<List<Room>?> getUserRooms(String email) async {
     final snapshot = await roomDB.where("members", arrayContains: email).get();
     final roomsData = snapshot.docs.map(
       (e) {
@@ -23,7 +23,7 @@ class RoomRepositories {
   }
 
   //to add room
-  Future addRoom(Room room, String userEmail) async {
+  static Future addRoom(Room room, String userEmail) async {
     final roomID = await roomDB.add(
       room.toJson(
         userEmail,
@@ -34,23 +34,23 @@ class RoomRepositories {
 
     for (String e in room.members!) {
       if (e != userEmail) {
-        userRepo.addRequestId(e, {roomID.id: room.title});
+        UserRepo.addRequestId(e, {roomID.id: room.title});
       }
     }
 
     //add room id of user creating the room
-    userRepo.addRoomId(userEmail, roomID.id);
+    UserRepo.addRoomId(userEmail, roomID.id);
   }
 
-  Future<Room> getRoomById(String roomId) async {
+  static Future<Room> getRoomById(String roomId) async {
     final snapshot = await roomDB.doc(roomId).get();
     final room = Room.fromSnapshot(snapshot);
     return room;
   }
 
   //to get all requests of the users:
-  Future<List<Room>> getRoomsRequests(String email) async {
-    final request = await userRepo.getUserRequestID(email);
+  static Future<List<Room>> getRoomsRequests(String email) async {
+    final request = await UserRepo.getUserRequestID(email);
     final snapshot = await _db.collection("Requests").doc(request).get();
 
     final roomTitle = snapshot.data()!.values.toList();
@@ -64,5 +64,93 @@ class RoomRepositories {
     return roomsData;
   }
 
-  //get room members using their id
+  //add transactions in the room
+  static Future addTransactionToRoom(
+      app.Transaction transaction, String roomID, String userEmail) async {
+    final data = await roomDB
+        .doc(roomID)
+        .collection('transaction-$userEmail')
+        .add(transaction.toJson());
+    await roomDB.doc(roomID).update({
+      'totalAmount': FieldValue.increment(transaction.amount),
+    });
+    return data;
+  }
+
+  //add reminders in the room
+  static Future addReminders(app.Transaction transaction, String roomID) async {
+    final data = await roomDB
+        .doc(roomID)
+        .collection('reminders')
+        .add(transaction.toJson());
+    return data;
+  }
+
+  static Future<List<app.Transaction>?> getRoomReminders(String roomID) async {
+    final snapshot = await roomDB.doc(roomID).collection('reminders').get();
+
+    final transactionData = snapshot.docs.map((e) {
+      final transactionType = e.data()['type'];
+
+      if (transactionType == app.TransactionType.Debt.name) {
+        return app.Debt.fromSnapshot(e);
+      }
+      return app.Subscription.fromSnapshot(e);
+    }).toList();
+
+    return transactionData;
+  }
+
+  static Future<List<app.Transaction>?> getRoomTransactions(
+      String roomID, List<String> members) async {
+    List<app.Transaction> transactionData = [];
+    for (String member in members) {
+      print(member);
+      final snapshot =
+          await roomDB.doc(roomID).collection('transaction-$member').get();
+
+      final data = snapshot.docs.map((e) {
+        final transactionType = e.data()['type'];
+
+        if (transactionType == app.TransactionType.Expense.name) {
+          return app.Expense.fromSnapshot(e);
+        } else if (transactionType == app.TransactionType.Income.name) {
+          return app.Income.fromSnapshot(e);
+        } else if (transactionType == app.TransactionType.Debt.name) {
+          return app.Debt.fromSnapshot(e);
+        }
+        return app.Subscription.fromSnapshot(e);
+      });
+      transactionData.addAll(data);
+    }
+    return transactionData;
+  }
+
+  static Future<Map<String, double>> getStats(
+      String roomId, String userEmail) async {
+    //to get the expense that the current user made
+    final room = await roomDB.doc(roomId).get();
+    final roomTotal = room.data()!['totalAmount'];
+    final snapshot =
+        await roomDB.doc(roomId).collection('transaction-$userEmail').get();
+
+    double totalExpense = 0;
+    double invested = 0;
+    snapshot.docs.forEach((element) {
+      final data = element.data();
+      if (data['type'] != app.TransactionType.Income.toString()) {
+        double expense = data['amount']!;
+        totalExpense += expense;
+      } else {
+        double expense = data['amount']!;
+        invested += expense;
+      }
+    });
+    print(invested);
+    return {
+      'Total Cost': roomTotal,
+      'My Costs': totalExpense,
+      'You Owe': invested,
+    };
+  }
 }
