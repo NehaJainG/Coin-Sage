@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coin_sage/defaults/strings.dart';
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
@@ -80,40 +80,6 @@ enum SubscriptionCategory {
   Other,
 }
 
-enum Reminder {
-  OnDay,
-  OneDayBefore,
-  TwoDayBefore,
-  FiveDayBefore,
-}
-
-enum Repeat {
-  DontRepeat,
-  Week,
-  Month,
-  Year,
-}
-
-Reminder? getReminderType(String? value) {
-  if (value == null) return null;
-  for (var entry in reminderStr.entries) {
-    if (entry.value == value) {
-      return entry.key;
-    }
-  }
-  return null;
-}
-
-Repeat? getRepeatType(String? value) {
-  if (value == null) return null;
-  for (var entry in repeatStr.entries) {
-    if (entry.value == value) {
-      return entry.key;
-    }
-  }
-  return null;
-}
-
 class Transaction {
   final String id;
   final double amount;
@@ -122,8 +88,6 @@ class Transaction {
   final TransactionType type;
   final dynamic category; // Use dynamic for flexibility
   DateTime? dueDate;
-  TimeOfDay? reminderTime;
-  Repeat? repeat;
 
   Transaction({
     required this.id,
@@ -132,9 +96,18 @@ class Transaction {
     required this.comments,
     required this.type,
     required this.category,
+    this.dueDate,
   });
+
   String get categoryName {
     return category.toString().split('.')[1];
+  }
+
+  String get title {
+    if (comments.isEmpty) {
+      return categoryName;
+    }
+    return comments;
   }
 
   Map<String, dynamic> toJson() => {
@@ -174,11 +147,6 @@ class Expense extends Transaction {
       comments: data['comments'],
       category: cate,
     );
-  }
-
-  @override
-  String get categoryName {
-    return category.toString().split('.')[1];
   }
 
   @override
@@ -224,11 +192,6 @@ class Income extends Transaction {
   }
 
   @override
-  String get categoryName {
-    return category.toString().split('.')[1];
-  }
-
-  @override
   Map<String, dynamic> toJson() => {
         'amount': amount,
         'comments': comments,
@@ -240,21 +203,13 @@ class Income extends Transaction {
 }
 
 class Debt extends Transaction {
-  final DateTime dueDate;
-  final TimeOfDay reminderTime;
-  Reminder? reminderType;
-  Repeat? repeat;
-
   Debt({
     required super.amount,
     required super.id,
     required super.date,
     required super.comments,
     required DebtCategory super.category,
-    required this.dueDate,
-    required this.reminderTime,
-    this.reminderType,
-    this.repeat,
+    required super.dueDate,
   }) : super(
           type: TransactionType.Debt,
         );
@@ -276,9 +231,6 @@ class Debt extends Transaction {
       comments: data['comments'],
       category: categ,
       dueDate: dateFormatter.parse(data['dueDate'] ?? data['returnDate']),
-      reminderTime: parseTimeOfDay(data['reminderTime']),
-      reminderType: getReminderType(data['reminderType']),
-      repeat: getRepeatType(data['repeatType']),
     );
   }
 
@@ -294,8 +246,7 @@ class Debt extends Transaction {
         'type': type.name,
         'category': categoryName,
         'date': dateFormatter.format(DateTime.now()),
-        'dueDate': dateFormatter.format(dueDate),
-        'reminderTime': timeFormat(reminderTime),
+        'dueDate': dateFormatter.format(dueDate!),
       };
   @override
   Map<String, dynamic> toReminderJson() => {
@@ -304,29 +255,18 @@ class Debt extends Transaction {
         'type': type.name,
         'category': categoryName,
         'date': dateFormatter.format(DateTime.now()),
-        'dueDate': dateFormatter.format(dueDate),
-        'reminderTime': timeFormat(reminderTime),
-        'reminderType': reminderStr[reminderType],
-        'repeatType': repeatStr[repeat],
+        'dueDate': dateFormatter.format(dueDate!),
       };
 }
 
 class Subscription extends Transaction {
-  final DateTime dueDate;
-  final TimeOfDay reminderTime;
-  Reminder? reminderType;
-  Repeat? repeat;
-
   Subscription({
     required super.amount,
     required super.id,
     required super.date,
     required super.comments,
     required SubscriptionCategory super.category,
-    required this.dueDate,
-    required this.reminderTime,
-    this.reminderType,
-    this.repeat,
+    required super.dueDate,
   }) : super(
           type: TransactionType.Subcriptions,
         );
@@ -340,6 +280,7 @@ class Subscription extends Transaction {
         categ = categories;
       }
     }
+    print(data['amount']);
 
     return Subscription(
       id: document.id,
@@ -348,15 +289,7 @@ class Subscription extends Transaction {
       comments: data['comments'],
       category: categ,
       dueDate: dateFormatter.parse(data['dueDate']),
-      reminderTime: parseTimeOfDay(data['reminderTime']),
-      reminderType: getReminderType(data['reminderType']),
-      repeat: getRepeatType(data['repeatType']),
     );
-  }
-
-  @override
-  String get categoryName {
-    return category.toString().split('.')[1];
   }
 
   @override
@@ -366,8 +299,7 @@ class Subscription extends Transaction {
         'type': type.name,
         'category': categoryName,
         'date': dateFormatter.format(DateTime.now()),
-        'dueDate': dateFormatter.format(dueDate),
-        'reminderTime': timeFormat(reminderTime),
+        'dueDate': dateFormatter.format(dueDate!),
       };
   @override
   Map<String, dynamic> toReminderJson() => {
@@ -376,9 +308,6 @@ class Subscription extends Transaction {
         'type': type.name,
         'category': categoryName,
         'date': dateFormatter.format(DateTime.now()),
-        'dueDate': dateFormatter.format(dueDate),
-        'reminderTime': timeFormat(reminderTime),
-        'reminderType': reminderStr[reminderType],
-        'repeatType': repeatStr[repeat],
+        'dueDate': dateFormatter.format(dueDate!),
       };
 }

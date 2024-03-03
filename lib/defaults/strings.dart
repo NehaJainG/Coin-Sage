@@ -1,3 +1,4 @@
+import 'package:coin_sage/models/reminder.dart';
 import 'package:coin_sage/models/transaction.dart';
 
 String signin = 'signin';
@@ -21,3 +22,9 @@ Map<Repeat, String> repeatStr = {
   Repeat.Week: 'Weekly',
   Repeat.Year: 'Yearly',
 };
+
+String notificationTitle = 'Payment Reminders';
+
+String getMessage(Transaction t, String name) {
+  return "Heyy $name, reminder for ${t.title} which dues on ${dateFormatter.format(t.dueDate!)} and of amount ${t.amount}";
+}

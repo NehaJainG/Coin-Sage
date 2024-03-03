@@ -1,14 +1,16 @@
+import 'package:coin_sage/defaults/defaults.dart';
+import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:coin_sage/screens/main/reminders.dart';
-import 'package:coin_sage/screens/room/user_rooms.dart';
-import 'package:coin_sage/screens/room/requests.dart';
-import 'package:coin_sage/screens/addnew/transaction.dart';
-import 'package:coin_sage/screens/addnew/room.dart';
+import 'package:coin_sage/presentation/reminders/reminders.dart';
+import 'package:coin_sage/presentation/rooms/user_rooms.dart';
+import 'package:coin_sage/presentation/rooms/requests.dart';
+import 'package:coin_sage/presentation/transaction/add_transaction.dart';
+import 'package:coin_sage/presentation/rooms/room.dart';
 
-import 'package:coin_sage/widgets/home/drawer.dart';
-import 'package:coin_sage/widgets/transaction/transaction_list.dart';
+import 'package:coin_sage/presentation/personal/drawer.dart';
+import 'package:coin_sage/presentation/transaction/transaction_list.dart';
 
 import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/icon.dart';
@@ -91,13 +93,8 @@ class _HomePageState extends State<HomePage> {
       userTransaction.add(newTransaction);
     });
 
-    if (newTransaction.type == TransactionType.Debt ||
-        newTransaction.type == TransactionType.Subcriptions) {
-      await TransactionRepository.addReminders(newTransaction, widget.user.uid);
-    } else {
-      await TransactionRepository.addTransaction(
-          newTransaction, widget.user.uid);
-    }
+    await TransactionRepository.addTransaction(newTransaction, widget.user.uid);
+    showSnackBar("Transaction is added successfully", context);
     getTransaction();
   }
 
@@ -187,10 +184,20 @@ class _HomePageState extends State<HomePage> {
         ],
         color: blackBlue,
       ),
-      child: const Column(
+      child: Column(
         children: [
           SizedBox(
             height: 300,
+            child: TextButton(
+              onPressed: () {
+                PushNotifications.createNotification(
+                  DateTime.now().add(
+                    const Duration(minutes: 1),
+                  ),
+                );
+              },
+              child: const Text('Check notification'),
+            ),
           ),
         ],
       ),

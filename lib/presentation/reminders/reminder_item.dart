@@ -29,31 +29,6 @@ class _ReminderItemState extends State<ReminderItem> {
 
   void onPaid() async {
     DateTime newDueDate = widget.transaction.dueDate!;
-    if (widget.transaction.repeat == Repeat.Year ||
-        (widget.transaction.repeat == Repeat.Month &&
-            widget.transaction.dueDate!.month == 12)) {
-      newDueDate = DateTime(
-        widget.transaction.dueDate!.year + 1,
-        widget.transaction.dueDate!.month,
-        widget.transaction.dueDate!.day,
-        widget.transaction.dueDate!.hour,
-        widget.transaction.dueDate!.minute,
-        widget.transaction.dueDate!.second,
-        widget.transaction.dueDate!.millisecond,
-        widget.transaction.dueDate!.microsecond,
-      );
-    } else if (widget.transaction.repeat == Repeat.Week) {
-      newDueDate = widget.transaction.dueDate!.add(
-        const Duration(days: 7),
-      );
-    } else if (widget.transaction.repeat == Repeat.Month) {
-      newDueDate = widget.transaction.dueDate!.add(
-        const Duration(days: 30),
-      );
-    }
-    setState(() {
-      widget.transaction.dueDate = newDueDate;
-    });
 
     await TransactionRepository.addTransaction(
         widget.transaction, widget.user.uid);
@@ -76,7 +51,7 @@ class _ReminderItemState extends State<ReminderItem> {
     }
     return Container(
       alignment: Alignment.topCenter,
-      margin: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+      margin: const EdgeInsets.fromLTRB(10, 7, 10, 7),
       padding: const EdgeInsets.fromLTRB(15, 13, 15, 8),
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 16, 31, 53),

@@ -1,5 +1,5 @@
 import 'package:coin_sage/authentication/firebase_auth/firebase_auth_servies.dart';
-import 'package:coin_sage/screens/main/home_page.dart';
+import 'package:coin_sage/presentation/personal/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

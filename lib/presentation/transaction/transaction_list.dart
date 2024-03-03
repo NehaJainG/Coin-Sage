@@ -3,7 +3,7 @@ import 'package:coin_sage/defaults/defaults.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/models/transaction.dart';
-import 'package:coin_sage/widgets/transaction/transaction_item.dart';
+import 'package:coin_sage/presentation/transaction/transaction_item.dart';
 
 class TransactionList extends StatefulWidget {
   const TransactionList({
@@ -26,7 +26,7 @@ class TransactionList extends StatefulWidget {
 }
 
 class _TransactionListState extends State<TransactionList> {
-  String month = months[DateTime.now().month]!;
+  late String month;
 
   late List<Transaction> monthWiseTransaction;
 
@@ -38,9 +38,7 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   void initState() {
-    monthWiseTransaction = widget.userTransactions
-        .where((element) => months[element.date.month]! == month)
-        .toList();
+    month = months[DateTime.now().month]!;
     super.initState();
   }
 
@@ -49,7 +47,6 @@ class _TransactionListState extends State<TransactionList> {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            // <-- SEE HERE
             title: const Text('Select Month'),
             children: <Widget>[
               for (String monthStr in months.values)
@@ -67,6 +64,7 @@ class _TransactionListState extends State<TransactionList> {
 
   @override
   Widget build(BuildContext context) {
+    onChangeOfMonth();
     Widget transactionList = SliverToBoxAdapter(
       child: Container(
         alignment: Alignment.center,
@@ -160,7 +158,6 @@ class _TransactionListState extends State<TransactionList> {
                               final m = await showMonthDialog();
                               setState(() {
                                 month = m ?? month;
-                                onChangeOfMonth();
                               });
                             },
                             child: Row(

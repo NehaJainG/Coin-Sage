@@ -3,8 +3,8 @@ import 'package:coin_sage/services/room_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:coin_sage/screens/addnew/room.dart';
-import 'package:coin_sage/screens/room/room_detail.dart';
+import 'package:coin_sage/presentation/rooms/room.dart';
+import 'package:coin_sage/presentation/rooms/room_detail.dart';
 
 import 'package:coin_sage/models/room.dart';
 

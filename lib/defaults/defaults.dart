@@ -64,6 +64,7 @@ void showSnackBar(String message, BuildContext context) {
                 color: Colors.white,
               )),
       backgroundColor: heroBlue.withOpacity(0.7),
+      dismissDirection: DismissDirection.horizontal,
     ),
   );
 }

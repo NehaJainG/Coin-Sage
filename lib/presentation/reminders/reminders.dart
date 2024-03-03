@@ -1,10 +1,11 @@
+import 'package:coin_sage/defaults/icon.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/services/transaction_repo.dart';
-import 'package:coin_sage/widgets/reminder_item.dart';
+import 'package:coin_sage/presentation/reminders/reminder_item.dart';
 
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/defaults/colors.dart';
@@ -77,7 +78,7 @@ class _RemindersState extends State<Reminders> {
     }
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
             color: black,
@@ -89,7 +90,7 @@ class _RemindersState extends State<Reminders> {
       child: Column(
         children: [
           widget.appBar(getReminder),
-          const SizedBox(height: 25),
+          const SizedBox(height: 8),
           Row(
             children: [
               const SizedBox(width: 20),
@@ -103,9 +104,14 @@ class _RemindersState extends State<Reminders> {
                 'Payment Reminder',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
+              const Spacer(),
+              IconButton(
+                icon: addIcon,
+                onPressed: () {},
+              ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 2),
           isLoading
               ? Center(
                   child: circularProgress,

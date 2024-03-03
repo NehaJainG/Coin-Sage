@@ -62,7 +62,7 @@ class _TransactionItemState extends State<TransactionItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  transaction.categoryName,
+                  transaction.title,
                   //softWrap: true,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(

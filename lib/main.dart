@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'package:coin_sage/firebase_options.dart';
 import 'package:coin_sage/defaults/colors.dart';
-import 'package:coin_sage/screens/app_gate.dart';
+import 'package:coin_sage/presentation/app_gate.dart';
 
 final customisedTheme = ThemeData(
   useMaterial3: true,
@@ -32,8 +32,8 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  PushNotifications.requestNotificationPermission();
   runApp(const MyApp());
+  PushNotifications.init();
 }
 
 class MyApp extends StatelessWidget {

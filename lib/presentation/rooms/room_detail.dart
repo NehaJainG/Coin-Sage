@@ -7,8 +7,8 @@ import 'package:coin_sage/defaults/colors.dart';
 
 import 'package:coin_sage/services/room_repo.dart';
 import 'package:coin_sage/services/user_repo.dart';
-import 'package:coin_sage/widgets/transaction/transaction_list.dart';
-import 'package:coin_sage/screens/addnew/transaction.dart';
+import 'package:coin_sage/presentation/transaction/transaction_list.dart';
+import 'package:coin_sage/presentation/transaction/add_transaction.dart';
 import 'package:coin_sage/models/room.dart';
 import 'package:coin_sage/models/user.dart';
 import 'package:coin_sage/models/transaction.dart';
