@@ -1,6 +1,9 @@
 import 'package:coin_sage/defaults/strings.dart';
+import 'package:coin_sage/models/transaction.dart';
 
-enum Reminder {
+import 'package:flutter/material.dart';
+
+enum Alert {
   OnDay,
   OneDayBefore,
   TwoDayBefore,
@@ -14,9 +17,9 @@ enum Repeat {
   Year,
 }
 
-Reminder? getReminderType(String? value) {
+Alert? getReminderType(String? value) {
   if (value == null) return null;
-  for (var entry in reminderStr.entries) {
+  for (var entry in alertStr.entries) {
     if (entry.value == value) {
       return entry.key;
     }
@@ -32,4 +35,27 @@ Repeat? getRepeatType(String? value) {
     }
   }
   return null;
+}
+
+class Reminder {
+  const Reminder({
+    required this.comments,
+    required this.alert,
+    required this.repeat,
+    required this.amount,
+    required this.category,
+    required this.dueDate,
+    required this.date,
+    required this.reminderTime,
+    required this.type,
+  });
+  final String comments;
+  final Alert alert;
+  final Repeat repeat;
+  final double amount;
+  final dynamic category;
+  final DateTime dueDate;
+  final TimeOfDay reminderTime;
+  final DateTime date;
+  final TransactionType type;
 }

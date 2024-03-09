@@ -1,5 +1,4 @@
 import 'package:coin_sage/models/transaction.dart';
-import 'package:flutter/material.dart';
 
 final transaction = [
   Debt(
@@ -9,7 +8,6 @@ final transaction = [
     comments: "Loan repayment",
     category: DebtCategory.Loan,
     dueDate: DateTime.now().add(Duration(days: 15)),
-    reminderTime: TimeOfDay(hour: 12, minute: 30),
   ),
   Subscription(
     id: '',
@@ -18,6 +16,5 @@ final transaction = [
     comments: "Monthly Netflix subscription",
     category: SubscriptionCategory.Streaming,
     dueDate: DateTime.now().add(Duration(days: 30)),
-    reminderTime: TimeOfDay(hour: 10, minute: 0),
   ),
 ];

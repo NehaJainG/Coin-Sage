@@ -1,13 +1,12 @@
-import 'package:coin_sage/defaults/icon.dart';
-import 'package:coin_sage/defaults/strings.dart';
-import 'package:coin_sage/services/transaction_repo.dart';
-import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:coin_sage/defaults/icon.dart';
 
 import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/colors.dart';
-import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class ReminderItem extends StatefulWidget {
@@ -77,11 +76,13 @@ class _ReminderItemState extends State<ReminderItem> {
                       ),
                 ),
               ),
-              Icon(categoryIcons[widget.transaction.category],
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onBackground
-                      .withOpacity(0.95)),
+              Icon(
+                categoryIcons[widget.transaction.category],
+                color: Theme.of(context)
+                    .colorScheme
+                    .onBackground
+                    .withOpacity(0.95),
+              ),
             ],
           ),
           const SizedBox(height: 5),
@@ -131,8 +132,9 @@ class _ReminderItemState extends State<ReminderItem> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
-                  onPressed: null,
-                  child: Text(repeatStr[widget.transaction.repeat] ?? 'Month')),
+                onPressed: null,
+                child: Text('Month'),
+              ),
               GestureDetector(
                 onTap: () {
                   onPaid();

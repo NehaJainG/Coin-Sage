@@ -38,16 +38,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     super.initState();
   }
 
-  //valid amount verification
-  bool isNotValidAmt(String? amt) {
-    if (amt == null || amt.isEmpty) return true;
-    double? amount = double.tryParse(amt);
-    if (amount == null || amount <= 0) {
-      return true;
-    }
-    return false;
-  }
-
   List<DropdownMenuItem> _dropdownItems(TransactionType type) {
     if (type == TransactionType.Income) {
       _selectedCategory = IncomeCategory.Business;

@@ -50,6 +50,16 @@ bool isNotValidTitle(String title) {
   return title.isEmpty || title.length > 25;
 }
 
+//valid amount verification
+bool isNotValidAmt(String? amt) {
+  if (amt == null || amt.isEmpty) return true;
+  double? amount = double.tryParse(amt);
+  if (amount == null || amount <= 0) {
+    return true;
+  }
+  return false;
+}
+
 Widget circularProgress = const Center(
   child: CircularProgressIndicator(),
 );

@@ -1,14 +1,14 @@
-import 'package:coin_sage/defaults/icon.dart';
 import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:coin_sage/models/transaction.dart';
-import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:coin_sage/presentation/reminders/add_reminder.dart';
 import 'package:coin_sage/presentation/reminders/reminder_item.dart';
+import 'package:coin_sage/services/transaction_repo.dart';
 
+import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/defaults/colors.dart';
+import 'package:coin_sage/defaults/icon.dart';
 
 class Reminders extends StatefulWidget {
   const Reminders({
@@ -107,7 +107,13 @@ class _RemindersState extends State<Reminders> {
               const Spacer(),
               IconButton(
                 icon: addIcon,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) => AddReminder(),
+                    ),
+                  );
+                },
               ),
             ],
           ),

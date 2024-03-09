@@ -39,8 +39,19 @@ Map<TransactionType, Icon> iconList = {
   TransactionType.Expense: Icon(Icons.call_made_rounded),
   TransactionType.Income: Icon(Icons.call_received_rounded),
   TransactionType.Debt: Icon(Icons.currency_exchange_rounded),
-  TransactionType.Subcriptions: Icon(Icons.description_outlined)
+  TransactionType.Subcriptions: Icon(Icons.description_outlined),
 };
+
+//Reminder icons
+Map<TransactionType, Icon> rIconList = {
+  TransactionType.Debt: Icon(
+    Icons.currency_exchange_rounded,
+  ),
+  TransactionType.Subcriptions: Icon(
+    Icons.description_outlined,
+  ),
+};
+
 //icons for categories:
 // Map to associate icons with each category
 const categoryIcons = {

@@ -70,7 +70,7 @@ class PushNotifications {
   }
 
   static Future createReminderNoti(TimeOfDay reminderTime, DateTime dueDate,
-      Reminder reminder, String message) async {
+      Alert reminder, String message) async {
     final reminderDate = DateTime(
       dueDate.year,
       dueDate.month,
@@ -79,11 +79,11 @@ class PushNotifications {
       reminderTime.minute,
     );
 
-    if (reminder == Reminder.OneDayBefore) {
+    if (reminder == Alert.OneDayBefore) {
       reminderDate.subtract(const Duration(days: 1));
-    } else if (reminder == Reminder.TwoDayBefore) {
+    } else if (reminder == Alert.TwoDayBefore) {
       reminderDate.subtract(const Duration(days: 2));
-    } else if (reminder == Reminder.FiveDayBefore) {
+    } else if (reminder == Alert.FiveDayBefore) {
       reminderDate.subtract(const Duration(days: 5));
     }
 

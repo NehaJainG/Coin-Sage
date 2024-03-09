@@ -9,11 +9,11 @@ String signup = 'signup';
 String signupHead = 'Create an account';
 String signupSub = 'Make your life simpler';
 
-Map<Reminder, String> reminderStr = {
-  Reminder.OnDay: 'On Day',
-  Reminder.OneDayBefore: 'One Day Before',
-  Reminder.TwoDayBefore: 'Two Day Before',
-  Reminder.FiveDayBefore: 'Five Day Before',
+Map<Alert, String> alertStr = {
+  Alert.OnDay: 'On Day',
+  Alert.OneDayBefore: 'One Day Before',
+  Alert.TwoDayBefore: 'Two Day Before',
+  Alert.FiveDayBefore: 'Five Day Before',
 };
 
 Map<Repeat, String> repeatStr = {
