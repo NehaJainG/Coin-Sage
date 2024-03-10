@@ -58,4 +58,15 @@ class Reminder {
   final TimeOfDay reminderTime;
   final DateTime date;
   final TransactionType type;
+
+  String get categoryName {
+    return category.toString().split('.')[1];
+  }
+
+  String get title {
+    if (comments.isEmpty) {
+      return categoryName;
+    }
+    return comments;
+  }
 }

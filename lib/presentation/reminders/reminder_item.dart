@@ -1,22 +1,21 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:coin_sage/models/reminder.dart';
+
 import 'package:coin_sage/defaults/icon.dart';
-
-import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/colors.dart';
 
 // ignore: must_be_immutable
 class ReminderItem extends StatefulWidget {
   const ReminderItem({
     super.key,
-    required this.transaction,
+    required this.reminder,
     required this.user,
   });
 
-  final Transaction transaction;
+  final Reminder reminder;
   final User user;
 
   @override
@@ -26,39 +25,46 @@ class ReminderItem extends StatefulWidget {
 class _ReminderItemState extends State<ReminderItem> {
   late bool isDue;
 
-  void onPaid() async {
-    DateTime newDueDate = widget.transaction.dueDate!;
-
-    await TransactionRepository.addTransaction(
-        widget.transaction, widget.user.uid);
-    await TransactionRepository.updateReminderOnPay(widget.user.uid,
-        widget.transaction.id, dateFormatter.format(newDueDate));
-  }
+  // void onPaid() async {
+  //   DateTime newDueDate = widget.reminder.dueDate!;
+  //   await TransactionRepository.addTransaction(
+  //       widget.reminder, widget.user.uid);
+  //   await TransactionRepository.updateReminderOnPay(widget.user.uid,
+  //       widget.reminder.id, dateFormatter.format(newDueDate));
+  // }
 
   @override
   Widget build(BuildContext context) {
-    String title = widget.transaction.type.name;
+    String title = widget.reminder.type.name;
     if (title.isNotEmpty) {
-      title = widget.transaction.comments.substring(0, 1).toUpperCase() +
-          widget.transaction.comments.substring(1);
+      title = widget.reminder.comments.substring(0, 1).toUpperCase() +
+          widget.reminder.comments.substring(1);
     }
-    int dueDay = DateTime.now().difference(widget.transaction.date).inDays;
-    isDue = dueDay < 0;
-    String due = '$dueDay Due days';
-    if (dueDay > 0) {
-      due = DateFormat.MMMMd().format(widget.transaction.dueDate!);
+    Duration dueDay = widget.reminder.dueDate.difference(DateTime.now());
+    isDue = dueDay.isNegative;
+    String due = dueDay.inDays == 0
+        ? dueDay.inHours == 0
+            ? '${dueDay.inMinutes.abs()} due min'
+            : '${dueDay.inHours.abs()} due hr'
+        : '${dueDay.inDays.abs()} Due day';
+    if (!dueDay.isNegative) {
+      due = DateFormat.MMMMd().format(widget.reminder.dueDate);
     }
     return Container(
       alignment: Alignment.topCenter,
-      margin: const EdgeInsets.fromLTRB(10, 7, 10, 7),
-      padding: const EdgeInsets.fromLTRB(15, 13, 15, 8),
+      margin: const EdgeInsets.fromLTRB(15, 7, 15, 7),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 16, 31, 53),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: lightGrey,
-          width: 1,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.fromARGB(255, 27, 26, 85),
+            Color.fromARGB(255, 31, 37, 68),
+            Color.fromARGB(255, 7, 15, 43),
+          ],
         ),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,19 +83,20 @@ class _ReminderItemState extends State<ReminderItem> {
                 ),
               ),
               Icon(
-                categoryIcons[widget.transaction.category],
+                categoryIcons[widget.reminder.category],
                 color: Theme.of(context)
                     .colorScheme
                     .onBackground
                     .withOpacity(0.95),
               ),
+              const SizedBox(width: 5),
             ],
           ),
           const SizedBox(height: 5),
           Row(
             children: [
               Text(
-                '₹ ${widget.transaction.amount}',
+                '₹ ${widget.reminder.amount}',
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w400,
@@ -97,24 +104,16 @@ class _ReminderItemState extends State<ReminderItem> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.fromLTRB(5, 3, 10, 3),
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                 decoration: BoxDecoration(
                   color: isDue
-                      ? Theme.of(context)
-                          .colorScheme
-                          .errorContainer
-                          .withOpacity(0.5)
+                      ? Theme.of(context).colorScheme.errorContainer
                       : Theme.of(context).highlightColor,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 6),
                     Text(
                       due,
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -122,22 +121,24 @@ class _ReminderItemState extends State<ReminderItem> {
                             fontWeight: FontWeight.w600,
                           ),
                     ),
+                    const SizedBox(width: 5),
+                    const Icon(Icons.access_time_sharp),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: null,
-                child: Text('Month'),
+              Text(
+                widget.reminder.type.name,
+                style: Theme.of(context).textTheme.labelLarge,
               ),
               GestureDetector(
                 onTap: () {
-                  onPaid();
+                  //onPaid();
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -150,16 +151,17 @@ class _ReminderItemState extends State<ReminderItem> {
                 child: Container(
                   alignment: Alignment.center,
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 45, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 45, vertical: 8),
                   decoration: BoxDecoration(
-                    color: maroon,
+                    color: heroBlue,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     'Paid',
                     style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          //color: black,
                         ),
                   ),
                 ),

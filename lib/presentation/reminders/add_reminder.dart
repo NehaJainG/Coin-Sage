@@ -46,6 +46,8 @@ class _AddReminderState extends State<AddReminder> {
         return;
       }
 
+      _formKey.currentState!.save();
+
       Navigator.of(context).pop<Reminder>(
         Reminder(
           comments: _enteredComments,
@@ -265,7 +267,7 @@ class _AddReminderState extends State<AddReminder> {
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge!
-                              .copyWith(fontWeight: FontWeight.w600),
+                              .copyWith(fontWeight: FontWeight.w400),
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: 'Enter Amount',
@@ -292,7 +294,7 @@ class _AddReminderState extends State<AddReminder> {
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge!
-                              .copyWith(fontWeight: FontWeight.w600),
+                              .copyWith(fontWeight: FontWeight.w400),
                           decoration: const InputDecoration(
                             hintText: 'Enter description',
                             contentPadding: EdgeInsets.symmetric(
@@ -314,7 +316,7 @@ class _AddReminderState extends State<AddReminder> {
                           padding: const EdgeInsets.only(left: 18),
                           style:
                               Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                   ),
                           decoration: const InputDecoration(
                             border: InputBorder.none,
@@ -344,7 +346,7 @@ class _AddReminderState extends State<AddReminder> {
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w600),
+                          .copyWith(fontWeight: FontWeight.w400),
                     ),
                   ),
                   const Divider(),
@@ -358,7 +360,7 @@ class _AddReminderState extends State<AddReminder> {
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w600),
+                          .copyWith(fontWeight: FontWeight.w400),
                     ),
                   ),
                   const Divider(),
@@ -370,7 +372,7 @@ class _AddReminderState extends State<AddReminder> {
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w600),
+                          .copyWith(fontWeight: FontWeight.w400),
                     ),
                   ),
                   const Divider(),
@@ -382,7 +384,7 @@ class _AddReminderState extends State<AddReminder> {
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
-                          .copyWith(fontWeight: FontWeight.w600),
+                          .copyWith(fontWeight: FontWeight.w400),
                     ),
                   ),
                   SizedBox(height: 30),
