@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fs;
 
+import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/models/reminder.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
+
+import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:coin_sage/services/reminders.dart';
 
 // ignore: must_be_immutable
 class ReminderItem extends StatefulWidget {
@@ -16,7 +20,7 @@ class ReminderItem extends StatefulWidget {
   });
 
   final Reminder reminder;
-  final User user;
+  final fs.User user;
 
   @override
   State<ReminderItem> createState() => _ReminderItemState();
@@ -25,13 +29,30 @@ class ReminderItem extends StatefulWidget {
 class _ReminderItemState extends State<ReminderItem> {
   late bool isDue;
 
-  // void onPaid() async {
-  //   DateTime newDueDate = widget.reminder.dueDate!;
-  //   await TransactionRepository.addTransaction(
-  //       widget.reminder, widget.user.uid);
-  //   await TransactionRepository.updateReminderOnPay(widget.user.uid,
-  //       widget.reminder.id, dateFormatter.format(newDueDate));
-  // }
+  void onPaid() async {
+    //add to Transaciton
+    Transaction newTransaction = widget.reminder.convertToTransaction();
+    await TransactionRepository.addTransaction(newTransaction, widget.user.uid);
+
+    //update the due date to next due Date
+    widget.reminder.updateDueDateOnPaid();
+
+    //if the the reminder is set as dont repeat, so delete once paid
+    if (widget.reminder.repeat == Repeat.DontRepeat) {
+      await ReminderServices.deleteReminderAfterPaid(
+        widget.user.uid,
+        widget.reminder.id,
+      );
+      return;
+    }
+
+    //update the local details to database
+    await ReminderServices.updateReminderOnPay(
+      widget.user.uid,
+      widget.reminder.id,
+      dateFormatter.format(widget.reminder.dueDate),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +159,7 @@ class _ReminderItemState extends State<ReminderItem> {
               ),
               GestureDetector(
                 onTap: () {
-                  //onPaid();
+                  onPaid();
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

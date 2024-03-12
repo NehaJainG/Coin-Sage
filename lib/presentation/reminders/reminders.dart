@@ -1,7 +1,9 @@
-import 'package:coin_sage/data.dart';
-import 'package:coin_sage/models/reminder.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:coin_sage/models/reminder.dart';
+
+import 'package:coin_sage/services/reminders.dart';
 
 import 'package:coin_sage/presentation/reminders/add_reminder.dart';
 import 'package:coin_sage/presentation/reminders/reminder_item.dart';
@@ -35,26 +37,24 @@ class _RemindersState extends State<Reminders> {
     super.initState();
   }
 
-  List<Reminder> userReminder = reminders;
+  late List<Reminder> userReminder = [];
 
   void getReminder() async {
     setState(() {
       isLoading = true;
     });
-    // List<Reminder>? list =
-    //     await TransactionRepository.getReminders(widget.user.uid);
-    // if (list == null) {
-    //   return;
-    // }
+    List<Reminder>? list = await ReminderServices.getReminders(widget.user.uid);
+    if (list == null) {
+      return;
+    }
 
     userReminder = [];
-
     setState(() {
-      // userReminder.addAll(list);
-      // userReminder.sort((n1, n2) {
-      //   return n2.dueDate!.compareTo(n1.dueDate!);
-      // });
-      userReminder = reminders;
+      userReminder.addAll(list);
+      userReminder.sort((n1, n2) {
+        return n1.dueDate.compareTo(n2.dueDate);
+      });
+
       isLoading = false;
     });
   }
@@ -79,6 +79,8 @@ class _RemindersState extends State<Reminders> {
     setState(() {
       userReminder.add(newReminder);
     });
+    await ReminderServices.addReminders(newReminder, widget.user.uid);
+    print('okayy');
   }
 
   @override

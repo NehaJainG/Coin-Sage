@@ -1,4 +1,3 @@
-// import 'package:coin_sage/services/transaction_repo.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
@@ -9,8 +8,10 @@ import 'package:coin_sage/models/transaction.dart';
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({
     super.key,
+    this.isRoom,
   });
   final TransactionType type = TransactionType.Expense;
+  final bool? isRoom;
 
   @override
   State<AddTransactionScreen> createState() {
@@ -19,7 +20,8 @@ class AddTransactionScreen extends StatefulWidget {
 }
 
 class _AddTransactionScreenState extends State<AddTransactionScreen> {
-  //final TransactionRepository transRepo = TransactionRepository();
+  bool isRoom = false;
+
   late TransactionType selectedtype;
   late List<DropdownMenuItem> dropdownItems;
   dynamic _selectedCategory;
@@ -33,6 +35,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   @override
   void initState() {
+    if (widget.isRoom != null) {
+      isRoom = widget.isRoom!;
+    }
     selectedtype = widget.type;
     dropdownItems = _dropdownItems(selectedtype);
     super.initState();
@@ -259,7 +264,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             ),
                           ),
                           Text(
-                            entry.key.name,
+                            isRoom
+                                ? entry.key == TransactionType.Income
+                                    ? 'Transfer'
+                                    : entry.key.name
+                                : entry.key.name,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ],

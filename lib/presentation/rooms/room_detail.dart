@@ -59,7 +59,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
   void _addNewTransaction() async {
     final newTransaction = await Navigator.of(context).push<Transaction>(
       MaterialPageRoute(
-        builder: (context) => const AddTransactionScreen(),
+        builder: (context) => const AddTransactionScreen(isRoom: true),
       ),
     );
     if (newTransaction == null) return;

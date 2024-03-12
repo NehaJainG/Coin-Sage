@@ -134,7 +134,7 @@ class Expense extends Transaction {
   factory Expense.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
-    var cate;
+    ExpenseCategory cate = ExpenseCategory.Dining;
     for (ExpenseCategory categories in ExpenseCategory.values) {
       if (categories.name == data['category']) {
         cate = categories;

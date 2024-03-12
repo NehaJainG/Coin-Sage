@@ -16,39 +16,6 @@ class TransactionRepository {
     return data;
   }
 
-  static Future addReminders(app.Transaction transaction, String userID) async {
-    if (transaction.type == app.TransactionType.Debt ||
-        transaction.type == app.TransactionType.Subcriptions) {
-      final data = await userDB
-          .doc(userID)
-          .collection('reminders')
-          .add(transaction.toReminderJson());
-      return data;
-    }
-  }
-
-  static Future updateReminderOnPay(
-      String userID, String reminderId, String updateDueDate) async {
-    await userDB.doc(userID).collection('reminders').doc(reminderId).update({
-      'dueDate': updateDueDate,
-    });
-  }
-
-  static Future<List<app.Transaction>?> getReminders(String userID) async {
-    final snapshot = await userDB.doc(userID).collection('reminders').get();
-
-    final transactionData = snapshot.docs.map((e) {
-      final transactionType = e.data()['type'];
-
-      if (transactionType == app.TransactionType.Debt.name) {
-        return app.Debt.fromSnapshot(e);
-      }
-      return app.Subscription.fromSnapshot(e);
-    }).toList();
-
-    return transactionData;
-  }
-
   static Future<List<app.Transaction>?> getTransactions(String userID) async {
     final snapshot = await userDB.doc(userID).collection('transactions').get();
 

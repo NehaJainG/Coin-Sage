@@ -50,6 +50,7 @@ class _AddReminderState extends State<AddReminder> {
 
       Navigator.of(context).pop<Reminder>(
         Reminder(
+          id: 'id',
           comments: _enteredComments,
           alert: _reminder,
           repeat: _repeat,
