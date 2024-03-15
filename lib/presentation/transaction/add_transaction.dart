@@ -1,3 +1,4 @@
+import 'package:coin_sage/defaults/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
@@ -265,9 +266,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ),
                           Text(
                             isRoom
-                                ? entry.key == TransactionType.Income
-                                    ? 'Transfer'
-                                    : entry.key.name
+                                ? roomTransaction[entry.key]!
                                 : entry.key.name,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),

@@ -1,5 +1,4 @@
 import 'package:coin_sage/defaults/defaults.dart';
-import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -188,16 +187,6 @@ class _HomePageState extends State<HomePage> {
         children: [
           SizedBox(
             height: 300,
-            child: TextButton(
-              onPressed: () {
-                PushNotifications.createNotification(
-                  DateTime.now().add(
-                    const Duration(minutes: 1),
-                  ),
-                );
-              },
-              child: const Text('Check notification'),
-            ),
           ),
         ],
       ),

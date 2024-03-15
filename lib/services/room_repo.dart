@@ -71,20 +71,26 @@ class RoomRepositories {
         .doc(roomID)
         .collection('transaction-$userEmail')
         .add(transaction.toJson());
-    await roomDB.doc(roomID).update({
-      'totalAmount': FieldValue.increment(transaction.amount),
-    });
+    if (transaction == app.TransactionType.Income) {
+      await roomDB.doc(roomID).update({
+        'totalAmount': FieldValue.increment(-transaction.amount),
+      });
+    } else {
+      await roomDB.doc(roomID).update({
+        'totalAmount': FieldValue.increment(transaction.amount),
+      });
+    }
     return data;
   }
 
-  //add reminders in the room
-  static Future addReminders(app.Transaction transaction, String roomID) async {
-    final data = await roomDB
-        .doc(roomID)
-        .collection('reminders')
-        .add(transaction.toJson());
-    return data;
-  }
+  // //add reminders in the room
+  // static Future addReminders(app.Transaction transaction, String roomID) async {
+  //   final data = await roomDB
+  //       .doc(roomID)
+  //       .collection('reminders')
+  //       .add(transaction.toJson());
+  //   return data;
+  // }
 
   static Future<List<app.Transaction>?> getRoomReminders(String roomID) async {
     final snapshot = await roomDB.doc(roomID).collection('reminders').get();
@@ -138,19 +144,22 @@ class RoomRepositories {
     double invested = 0;
     snapshot.docs.forEach((element) {
       final data = element.data();
-      if (data['type'] != app.TransactionType.Income.toString()) {
-        double expense = data['amount']!;
-        totalExpense += expense;
-      } else {
+      print(data['type']);
+      if (data['type'] == app.TransactionType.Income.name) {
         double expense = data['amount']!;
         invested += expense;
+      } else {
+        double expense = data['amount']!;
+        totalExpense += expense;
       }
     });
     print(invested);
+    print(totalExpense);
+    print(roomTotal);
     return {
-      'Total Cost': roomTotal,
-      'My Costs': totalExpense,
-      'You Owe': invested,
+      'Total Cost': roomTotal.toDouble(),
+      'You Owe': totalExpense,
+      'You Invested': invested,
     };
   }
 }

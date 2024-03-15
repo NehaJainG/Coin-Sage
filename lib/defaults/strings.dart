@@ -25,6 +25,9 @@ Map<Repeat, String> repeatStr = {
 
 String notificationTitle = 'Payment Reminders';
 
-String getMessage(Transaction t, String name) {
-  return "Heyy $name, reminder for ${t.title} which dues on ${dateFormatter.format(t.dueDate!)} and of amount ${t.amount}";
-}
+Map<TransactionType, String> roomTransaction = {
+  TransactionType.Debt: 'Borrowed',
+  TransactionType.Expense: 'Expense',
+  TransactionType.Income: 'Contribute',
+  TransactionType.Subcriptions: 'Bills&Tax',
+};

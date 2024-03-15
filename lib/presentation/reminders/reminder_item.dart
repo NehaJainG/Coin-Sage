@@ -1,3 +1,4 @@
+import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fs;
@@ -50,13 +51,19 @@ class _ReminderItemState extends State<ReminderItem> {
     await ReminderServices.updateReminderOnPay(
       widget.user.uid,
       widget.reminder.id,
-      dateFormatter.format(widget.reminder.dueDate),
+      widget.reminder.dueDate.toIso8601String(),
     );
+
+    String message =
+        '${widget.user.displayName ?? "User"} you have to pay ${widget.reminder.amount} amount to ${widget.reminder.title}';
+
+    await PushNotifications.createReminderNoti(widget.reminder, message);
   }
 
   @override
   Widget build(BuildContext context) {
     String title = widget.reminder.type.name;
+    print(widget.reminder.reminderDateTime);
     if (title.isNotEmpty) {
       title = widget.reminder.comments.substring(0, 1).toUpperCase() +
           widget.reminder.comments.substring(1);
@@ -162,9 +169,10 @@ class _ReminderItemState extends State<ReminderItem> {
                   onPaid();
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      duration: Duration(seconds: 3),
-                      content: Text('Added to your expenses list'),
+                    SnackBar(
+                      duration: const Duration(seconds: 3),
+                      content: Text(
+                          'Added to your expenses list. ${widget.reminder.repeat != Repeat.DontRepeat ? 'Your next reminder is also set!' : ''}'),
                       //action: SnackBarAction(label: 'Undo', onPressed: () {}),
                     ),
                   );

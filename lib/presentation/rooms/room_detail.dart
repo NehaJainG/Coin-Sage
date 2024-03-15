@@ -34,8 +34,8 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
   List<Transaction> roomTransaction = [];
   Map<String, double> statsVal = {
     'Total Cost': 0,
-    'My Costs': 0,
     'You Owe': 0,
+    'You Invested': 0,
   };
 
   @override
@@ -74,6 +74,9 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
   }
 
   void getTransaction() async {
+    setState(() {
+      isLoading = true;
+    });
     List<Transaction>? list = await RoomRepositories.getRoomTransactions(
         widget.room.id!, widget.room.members!);
     if (list == null) return;
@@ -85,7 +88,6 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
 
   void getMembers() async {
     setState(() {
-      isLoading = true;
       _members = [];
     });
     if (widget.room.members == null) {
@@ -110,7 +112,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
       body: StreamBuilder(
           stream: RoomRepositories.roomDB.snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (!snapshot.hasData || isLoading) {
               return circularProgress;
             }
             return TransactionList(
@@ -127,6 +129,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
                       onPressed: () {
                         getTransaction();
                         getStats();
+                        getMembers();
                       },
                       icon: refreshIcon,
                     ),
@@ -141,6 +144,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
     double width = MediaQuery.sizeOf(context).width;
     return Column(
       children: [
+        memberList(),
         const SizedBox(height: 15),
         stats('Total Cost', statsVal['Total Cost']!.round().toString(), navy,
             null, width - 20),
@@ -148,14 +152,13 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            stats('My Costs', statsVal['My Costs']!.round().toString(),
-                heroBlue, null, width * 0.5 - 15),
-            stats('You Owe', statsVal['You Owe']!.round().toString(), null,
-                lightBlue, width * 0.5 - 15),
+            stats('You Owe', statsVal['You Owe']!.round().toString(), heroBlue,
+                null, width * 0.5 - 15),
+            stats('You Invested', statsVal['You Invested']!.round().toString(),
+                null, lightBlue, width * 0.5 - 15),
           ],
         ),
         const SizedBox(height: 15),
-        memberList(),
       ],
     );
   }
@@ -196,6 +199,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        //const Divider(),
         Padding(
           padding: const EdgeInsets.fromLTRB(15.0, 0, 8, 5),
           child: Row(
@@ -208,45 +212,48 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
                     ),
               ),
               const Spacer(),
-              IconButton(
-                icon: refreshIcon,
-                onPressed: () {
-                  getMembers();
-                },
-              ),
+              // IconButton(
+              //   icon: refreshIcon,
+              //   onPressed:
+              //   () {
+              //     getMembers();
+              //   },
+              // ),
             ],
           ),
         ),
         SizedBox(
-          height: 120,
+          height: 90,
           child: StreamBuilder(
-              stream: UserRepo.userDB.snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || isLoading) {
-                  return circularProgress;
-                }
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _members.length,
-                  itemBuilder: (context, index) => Container(
-                    margin: const EdgeInsets.fromLTRB(10, 0, 8, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 45,
-                          child: Icon(Icons.person_2),
-                        ),
-                        Text(
-                          (_members[index].name),
-                          softWrap: true,
-                        ),
-                      ],
-                    ),
+            stream: UserRepo.userDB.snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || isLoading) {
+                return circularProgress;
+              }
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: _members.length,
+                itemBuilder: (context, index) => Container(
+                  margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                        child: Icon(Icons.person_2),
+                      ),
+                      Text(
+                        (_members[index].name),
+                        softWrap: true,
+                      ),
+                    ],
                   ),
-                );
-              }),
+                ),
+              );
+            },
+          ),
         ),
+        const Divider(),
       ],
     );
   }

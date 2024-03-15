@@ -1,3 +1,4 @@
+import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -68,6 +69,7 @@ class _RemindersState extends State<Reminders> {
   }
 
   void addReminder() async {
+    print('Click');
     final newReminder = await Navigator.of(context).push<Reminder>(
       MaterialPageRoute(
         builder: (ctx) => AddReminder(),
@@ -79,7 +81,12 @@ class _RemindersState extends State<Reminders> {
     setState(() {
       userReminder.add(newReminder);
     });
+
+    String message =
+        '${widget.user.displayName ?? "User"} you have to pay ${newReminder.amount} amount to ${newReminder.title}';
     await ReminderServices.addReminders(newReminder, widget.user.uid);
+    await PushNotifications.createReminderNoti(newReminder, message);
+    showSnackBar("Your reminder is been set", context);
     print('okayy');
   }
 

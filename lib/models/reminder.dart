@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as fs;
 
@@ -46,6 +48,7 @@ dynamic getCategory(String name, enumList) {
 
 class Reminder {
   Reminder({
+    int? scheduleId,
     required this.id,
     required this.comments,
     required this.alert,
@@ -56,8 +59,10 @@ class Reminder {
     required this.date,
     required this.reminderTime,
     required this.type,
-  });
+  }) : scheduleId = scheduleId ?? Random().nextInt(1000);
+
   final String id;
+  final int scheduleId;
   final String comments;
   final Alert alert;
   final Repeat repeat;
@@ -80,8 +85,24 @@ class Reminder {
     return comments;
   }
 
+  DateTime get reminderDateTime {
+    int subDate = 0;
+    if (alert == Alert.OneDayBefore) {
+      subDate = 1;
+    } else if (alert == Alert.TwoDayBefore) {
+      subDate = 2;
+    } else if (alert == Alert.FiveDayBefore) {
+      subDate = 5;
+    }
+    DateTime reminderDateTime1 = DateTime(dueDate.year, dueDate.month,
+        dueDate.day - subDate, reminderTime.hour, reminderTime.minute, 00, 00);
+
+    return reminderDateTime1;
+  }
+
   Map<String, dynamic> toJson() {
     return {
+      'scheduleId': scheduleId,
       'comments': comments,
       'alert': alert.name,
       'repeat': repeat.name,
@@ -111,6 +132,7 @@ class Reminder {
     //finally return the reminder object.
     return Reminder(
       id: document.id,
+      scheduleId: data['scheduleId'],
       comments: data['comments'],
       alert: getCategory(data['alert'], Alert.values),
       repeat: getCategory(data['repeat'], Repeat.values),

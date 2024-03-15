@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/strings.dart';
 import 'package:coin_sage/models/reminder.dart';
-import 'package:coin_sage/models/transaction.dart';
-import 'package:flutter/material.dart';
 
 class PushNotifications {
   static final AwesomeNotifications notification = AwesomeNotifications();
@@ -33,7 +29,6 @@ class PushNotifications {
         ),
       ],
     );
-    print('it worked');
   }
 
   Future userRequest() async {
@@ -47,58 +42,33 @@ class PushNotifications {
     }
   }
 
-  static Future createNotification(DateTime reminderDate) async {
-    print(reminderDate.toString());
+  // static Future createNotification() async {
+  //   return notification.createNotification(
+  //     content: NotificationContent(
+  //       title: notificationTitle,
+  //       body: 'User you have to pay x amount for y',
+  //       id: 1,
+  //       channelKey: 'alerts',
+  //       category: NotificationCategory.Reminder,
+  //       wakeUpScreen: true,
+  //       // notificationLayout:
+  //     ),
+  //   );
+  // }
+
+  static Future createReminderNoti(Reminder reminder, String message) async {
     return notification.createNotification(
       schedule: NotificationCalendar(
-        year: reminderDate.year,
-        month: reminderDate.month,
-        day: reminderDate.day,
-        hour: reminderDate.hour,
-        minute: reminderDate.minute,
-      ),
-      content: NotificationContent(
-        title: notificationTitle,
-        body: 'User you have to pay x amount for y',
-        id: Random().nextInt(100),
-        channelKey: 'alerts',
-        category: NotificationCategory.Reminder,
-        wakeUpScreen: true,
-        // notificationLayout:
-      ),
-    );
-  }
-
-  static Future createReminderNoti(TimeOfDay reminderTime, DateTime dueDate,
-      Alert reminder, String message) async {
-    final reminderDate = DateTime(
-      dueDate.year,
-      dueDate.month,
-      dueDate.day,
-      reminderTime.hour,
-      reminderTime.minute,
-    );
-
-    if (reminder == Alert.OneDayBefore) {
-      reminderDate.subtract(const Duration(days: 1));
-    } else if (reminder == Alert.TwoDayBefore) {
-      reminderDate.subtract(const Duration(days: 2));
-    } else if (reminder == Alert.FiveDayBefore) {
-      reminderDate.subtract(const Duration(days: 5));
-    }
-
-    return notification.createNotification(
-      schedule: NotificationCalendar(
-        year: reminderDate.year,
-        month: reminderDate.month,
-        day: reminderDate.day,
-        hour: reminderDate.hour,
-        minute: reminderDate.minute,
+        year: reminder.reminderDateTime.year,
+        month: reminder.reminderDateTime.month,
+        day: reminder.reminderDateTime.day,
+        hour: reminder.reminderDateTime.hour,
+        minute: reminder.reminderDateTime.minute,
       ),
       content: NotificationContent(
         title: notificationTitle,
         body: message,
-        id: 1,
+        id: reminder.scheduleId,
         channelKey: 'alerts',
         category: NotificationCategory.Reminder,
         wakeUpScreen: true,
@@ -106,39 +76,7 @@ class PushNotifications {
     );
   }
 
-  void newNotiConfig(Transaction t) {}
-
-  Future deleteNotification() async {
-    notification.cancelSchedule(1);
-  }
-
-  /// method to detect when a new notification is created and schedule it
-  @pragma("vm:entry-point")
-  static Future<void> onNotificationCreatedMethod(
-      ReceivedNotification receivedNotification) async {
-    // Your code goes here
-  }
-
-  /// Use this method to detect every time that a new notification is displayed
-  @pragma("vm:entry-point")
-  static Future<void> onNotificationDisplayedMethod(
-      ReceivedNotification receivedNotification) async {
-    // Your code goes here
-  }
-
-  /// Use this method to detect if the user dismissed a notification
-  @pragma("vm:entry-point")
-  static Future<void> onDismissActionReceivedMethod(
-      ReceivedAction receivedAction) async {
-    // Your code goes here
-  }
-
-  /// Use this method to detect when the user taps on a notification or action button
-  @pragma("vm:entry-point")
-  static Future<void> onActionReceivedMethod(
-      ReceivedAction receivedAction) async {
-    // Your code goes here
-
-    // Navigate into pages, avoiding to open the notification details page over another details page already opened
+  Future deleteNotification(int reminderScheduleId) async {
+    await notification.cancelSchedule(reminderScheduleId);
   }
 }
