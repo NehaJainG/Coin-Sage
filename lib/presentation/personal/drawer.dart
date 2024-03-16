@@ -76,9 +76,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 .map((element) => ListTile(
                       onTap: () {
                         widget.closeDrawer();
-                        if (element.key == 'Transaction') {
+                        if (element.key == 'Add Transaction') {
                           widget.transaction();
-                        } else if (element.key == 'All Rooms') {
+                        } else if (element.key == 'View Rooms') {
                           widget.room();
                         } else if (element.key == 'Home') {
                           widget.selectPage(0);
