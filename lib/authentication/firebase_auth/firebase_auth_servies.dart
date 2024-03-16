@@ -11,6 +11,7 @@ class FirebaseAuthService {
     String email,
     String password,
     String name,
+    void Function(String) onError,
   ) async {
     try {
       //create account
@@ -35,14 +36,24 @@ class FirebaseAuthService {
 
       return credential.user;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e.code);
+      if (e.code == 'weak-password') {
+        onError('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        onError('The account already exists for that email.');
+      } else {
+        onError('${e.message}');
+      }
+    } catch (e) {
+      throw e.toString();
     }
+    return null;
   }
 
   //if already have account
   Future<User?> signInWithEmailAndPassword(
     String email,
     String password,
+    void Function(String) onError,
   ) async {
     try {
       //log into existing account
@@ -52,8 +63,17 @@ class FirebaseAuthService {
       );
       return credential.user;
     } on FirebaseAuthException catch (e) {
-      throw Exception(e.code);
+      if (e.code == 'user-not-found') {
+        onError('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        onError('Wrong password provided for that user.');
+      } else {
+        onError('${e.message}');
+      }
+    } catch (e) {
+      throw e.toString();
     }
+    return null;
   }
 
   Future logout() async {

@@ -187,24 +187,28 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     Widget additionalContent = const SizedBox();
     if (selectedtype == TransactionType.Debt ||
         selectedtype == TransactionType.Subcriptions) {
-      additionalContent = Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          TextButton.icon(
-            icon: calenderIcon,
-            onPressed: _dueDatePicker,
-            label: Text(
-              _dueDate == null
-                  ? selectedtype == TransactionType.Debt
-                      ? 'Pick Return Date'
-                      : 'Pick Due Date'
-                  : dateFormatter.format(_dueDate!),
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
+      additionalContent = Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).dividerColor,
           ),
-        ],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListTile(
+          onTap: _dueDatePicker,
+          leading: calenderIcon,
+          title: Text(
+            _dueDate == null
+                ? selectedtype == TransactionType.Debt
+                    ? 'Pick Return Date'
+                    : 'Pick Due Date'
+                : dateFormatter.format(_dueDate!),
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ),
       );
     }
     return Scaffold(

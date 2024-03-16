@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/authentication/firebase_auth/firebase_auth_servies.dart';
+import 'package:coin_sage/authentication/screens/login.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
 
@@ -31,6 +32,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
   void signOut() {
     final auth = FirebaseAuthService();
     auth.logout();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
   }
 
   @override

@@ -138,11 +138,16 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  void displayErrorMessage(String message) {
+    showSnackBar(message, context);
+  }
+
   void _signUp() async {
     String name = _nameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
-    User? user = await _auth.signUpWithEmailAndPassword(email, password, name);
+    User? user = await _auth.signUpWithEmailAndPassword(
+        email, password, name, displayErrorMessage);
 
     if (user != null) {
       print("User is successfully created");

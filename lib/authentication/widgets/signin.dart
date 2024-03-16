@@ -27,11 +27,16 @@ class _SignInState extends State<SignIn> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  void displayErrorMessage(String message) {
+    showSnackBar(message, context);
+  }
+
   void authenticate() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text;
       String password = _passwordController.text;
-      User? user = await _auth.signInWithEmailAndPassword(email, password);
+      User? user = await _auth.signInWithEmailAndPassword(
+          email, password, displayErrorMessage);
 
       if (user != null) {
         Navigator.of(context).pushReplacement(
