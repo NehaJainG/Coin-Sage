@@ -23,6 +23,8 @@ final transaction = [
 
 final List<Reminder> reminders = [
   Reminder(
+    id: 'id1',
+    scheduleId: 1,
     comments: "Reminder 1",
     alert: Alert.OnDay,
     repeat: Repeat.DontRepeat,
@@ -34,6 +36,8 @@ final List<Reminder> reminders = [
     type: TransactionType.Debt,
   ),
   Reminder(
+    id: 'id2',
+    scheduleId: 2,
     comments: "Reminder 2",
     alert: Alert.OneDayBefore,
     repeat: Repeat.Week,
@@ -45,6 +49,8 @@ final List<Reminder> reminders = [
     type: TransactionType.Subcriptions,
   ),
   Reminder(
+    id: 'id3',
+    scheduleId: 3,
     comments: "Reminder 3",
     alert: Alert.TwoDayBefore,
     repeat: Repeat.Month,
@@ -56,6 +62,8 @@ final List<Reminder> reminders = [
     type: TransactionType.Debt,
   ),
   Reminder(
+    id: 'id4',
+    scheduleId: 4,
     comments: "Reminder 4",
     alert: Alert.FiveDayBefore,
     repeat: Repeat.Year,

@@ -14,15 +14,15 @@ Icon menuIcon = const Icon(
 Icon payment = const Icon(Icons.payment_outlined);
 
 Icon backIcon = const Icon(Icons.arrow_back_ios);
+Icon addIcon = const Icon(Icons.add);
+Icon email = const Icon(Icons.email_rounded);
+Icon password = const Icon(Icons.key_rounded);
+Icon person = const Icon(Icons.person);
 
 //add new room icons
-Icon addIcon = const Icon(Icons.add);
 Icon addMemberIcon = const Icon(Icons.person_add_alt_1_rounded);
 Icon roomTitle = const Icon(Icons.groups_2_rounded);
 Icon searchMemberIcon = const Icon(Icons.person_search_rounded);
-Icon person = const Icon(Icons.person);
-Icon email = const Icon(Icons.email_rounded);
-Icon password = const Icon(Icons.key_rounded);
 
 //add new transaction icons
 Icon rupeeIcon = const Icon(Icons.currency_rupee_rounded);
@@ -31,23 +31,27 @@ Icon calenderIcon = const Icon(Icons.calendar_month_rounded);
 //add bottom navigation
 
 Icon home = const Icon(Icons.home_filled);
-Icon settings = const Icon(Icons.settings);
-Icon reminderIcon = const Icon(Icons.notifications_active);
+Icon reminderIcon = const Icon(Icons.notifications_active_outlined);
+Icon settings = const Icon(Icons.account_circle_outlined);
+
+Icon homeActive = const Icon(Icons.home_rounded);
+Icon settingActive = const Icon(Icons.account_circle_rounded);
+Icon reminderActive = const Icon(Icons.notifications_active);
 
 //Transaction type icon
 Map<TransactionType, Icon> iconList = {
-  TransactionType.Expense: Icon(Icons.call_made_rounded),
-  TransactionType.Income: Icon(Icons.call_received_rounded),
-  TransactionType.Debt: Icon(Icons.currency_exchange_rounded),
-  TransactionType.Subcriptions: Icon(Icons.description_outlined),
+  TransactionType.Expense: const Icon(Icons.call_made_rounded),
+  TransactionType.Income: const Icon(Icons.call_received_rounded),
+  TransactionType.Debt: const Icon(Icons.currency_exchange_rounded),
+  TransactionType.Subcriptions: const Icon(Icons.description_outlined),
 };
 
 //Reminder icons
 Map<TransactionType, Icon> rIconList = {
-  TransactionType.Debt: Icon(
+  TransactionType.Debt: const Icon(
     Icons.currency_exchange_rounded,
   ),
-  TransactionType.Subcriptions: Icon(
+  TransactionType.Subcriptions: const Icon(
     Icons.description_outlined,
   ),
 };
@@ -96,7 +100,7 @@ const categoryIcons = {
 const drawerItems = {
   'Home': Icon(Icons.home_filled),
   'Reminder': Icon(Icons.notifications_active),
-  'Transaction': Icon(Icons.currency_exchange),
-  'All Rooms': Icon(Icons.groups),
+  'Add Transaction': Icon(Icons.currency_exchange),
+  'View Rooms': Icon(Icons.groups),
   'Requests': Icon(Icons.favorite),
 };

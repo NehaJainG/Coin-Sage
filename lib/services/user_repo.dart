@@ -24,7 +24,7 @@ class UserRepo {
 
   //to get multiple users
   static Future<List<User>> getAllUsers() async {
-    final snapshot = await _db.collection("Users").get();
+    final snapshot = await userDB.get();
     final userData = snapshot.docs
         .map(
           (e) => User.fromSnapshot(e),
@@ -35,8 +35,7 @@ class UserRepo {
 
   // so if someone adds to room they get request id
   static Future<String> getUserRequestID(String email) async {
-    final snapshot =
-        await _db.collection("Users").where("email", isEqualTo: email).get();
+    final snapshot = await userDB.where("email", isEqualTo: email).get();
     print(snapshot);
     final requestID = snapshot.docs
         .map(

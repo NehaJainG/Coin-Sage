@@ -31,3 +31,5 @@ Map<TransactionType, String> roomTransaction = {
   TransactionType.Income: 'Contribute',
   TransactionType.Subcriptions: 'Bills&Tax',
 };
+
+String rupee = '₹';

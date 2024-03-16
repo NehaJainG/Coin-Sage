@@ -33,4 +33,11 @@ class ReminderServices {
       String userID, String reminderID) async {
     await userDB.doc(userID).collection('reminders').doc(reminderID).delete();
   }
+
+  static Future<double> getUserNoOfReminder(String userId) async {
+    final snapshot = await userDB.doc(userId).collection('reminders').get();
+
+    final count = snapshot.size;
+    return count.toDouble();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:coin_sage/defaults/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/colors.dart';
@@ -75,7 +76,7 @@ class _TransactionItemState extends State<TransactionItem> {
             ),
           ),
           Text(
-            '₹ ${transaction.amount}',
+            '$rupee ${transaction.amount}',
             style: Theme.of(context).textTheme.labelLarge!.copyWith(
                   fontSize: 18,
                   color:

@@ -55,6 +55,7 @@ Color darkViolet = const Color.fromARGB(255, 34, 9, 44);
 Color darkBrown = const Color.fromARGB(255, 61, 12, 17);
 Color darkPurple = const Color.fromARGB(255, 51, 29, 44);
 Color blackBlue = const Color.fromARGB(255, 3, 0, 28);
+Color BG = const Color.fromARGB(255, 32, 68, 131);
 List<Color> darkcolorPalette = [
   maroon,
   darkPurple,

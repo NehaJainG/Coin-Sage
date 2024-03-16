@@ -1,4 +1,7 @@
 import 'package:coin_sage/defaults/defaults.dart';
+import 'package:coin_sage/defaults/strings.dart';
+import 'package:coin_sage/presentation/personal/settings.dart';
+import 'package:coin_sage/services/reminders.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -34,6 +37,12 @@ class _HomePageState extends State<HomePage> {
   bool isDrawerOpen = false;
   bool isLoading = false;
 
+  Map<String, double> userStats = {
+    'Income': 0,
+    'Expense': 0,
+    'Reminders': 0,
+  };
+
   List<Transaction> userTransaction = [];
 
   late String name;
@@ -59,6 +68,40 @@ class _HomePageState extends State<HomePage> {
       userTransaction.sort((a, b) => b.date.compareTo(a.date));
       isLoading = false;
     });
+    getStats();
+  }
+
+  void getStats() async {
+    final double count =
+        await ReminderServices.getUserNoOfReminder(widget.user.uid);
+
+    final expense = userTransaction
+        .map<double>((transaction) {
+          double amount = 0.0;
+          if (transaction.type != TransactionType.Income) {
+            amount = transaction.amount;
+          }
+          return amount;
+        })
+        .toList()
+        .fold(0.0, (previousValue, element) => previousValue + element);
+
+    final income = userTransaction
+        .map((transaction) {
+          double amount = 0.0;
+          if (transaction.type == TransactionType.Income) {
+            amount = transaction.amount;
+          }
+          return amount;
+        })
+        .toList()
+        .fold(0.0, (previousValue, element) => previousValue + element);
+
+    setState(() {
+      userStats['Reminders'] = count;
+      userStats['Income'] = income;
+      userStats['Expense'] = expense;
+    });
   }
 
   void closeDrawer() {
@@ -78,6 +121,53 @@ class _HomePageState extends State<HomePage> {
       scaleFactor = 0.72;
       isDrawerOpen = true;
     });
+  }
+
+  Widget stats(
+    String title,
+    String value,
+    Color? foreground,
+    Color? borderColor,
+    double width,
+    Icon? icon,
+    Color? textColor,
+  ) {
+    return Container(
+      width: width,
+      height: 90,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: foreground,
+        borderRadius: BorderRadius.circular(10),
+        border: borderColor != null ? Border.all(color: borderColor) : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              icon ?? const SizedBox(),
+              const SizedBox(width: 4),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 16,
+                    ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _addNewTransaction() async {
@@ -117,14 +207,6 @@ class _HomePageState extends State<HomePage> {
   void _viewRequests() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => RequestScreen(user: widget.user)),
-    );
-  }
-
-  Widget viewReminders() {
-    return Reminders(
-      appBar: AppBar,
-      isDrawerOpen: isDrawerOpen,
-      user: widget.user,
     );
   }
 
@@ -172,9 +254,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget get fixedContent {
+    double width = MediaQuery.sizeOf(context).width;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(50)),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
             color: lightGrey.withOpacity(0.7),
@@ -183,12 +266,46 @@ class _HomePageState extends State<HomePage> {
         ],
         color: blackBlue,
       ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 300,
-          ),
-        ],
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+        height: 280,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Your Stats',
+                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        fontSize: 20,
+                      ),
+                ),
+                const Spacer(),
+                const Icon(Icons.bar_chart_rounded),
+              ],
+            ),
+            const SizedBox(height: 10),
+            stats('Total Expense', '$rupee ${userStats['Expense']}', BG, null,
+                width * 0.9, const Icon(Icons.currency_exchange), red),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                stats('Total Income', '$rupee ${userStats['Income']}', BG, null,
+                    width * 0.43, iconList[TransactionType.Income]!, green),
+                const Spacer(),
+                stats('Reminders', '${userStats['Reminders']!.ceil()}', null,
+                    BG, width * 0.43, null, null),
+              ],
+            ),
+            const Spacer(),
+            Divider(
+              thickness: 3,
+              color: white,
+              indent: width * 0.4,
+              endIndent: width * 0.4,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -202,6 +319,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget viewReminders() {
+    return Reminders(
+      appBar: AppBar,
+      isDrawerOpen: isDrawerOpen,
+      user: widget.user,
+    );
+  }
+
+  Widget settingPage() {
+    return SettingPage(
+      user: widget.user,
+      appBar: AppBar(null),
+      isDrawerOpen: isDrawerOpen,
+    );
+  }
+
   void selectPage(value) {
     setState(() {
       _selectedPage = value;
@@ -211,6 +344,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _selectedPage == 0
+          ? !isDrawerOpen
+              ? FloatingActionButton.extended(
+                  backgroundColor: BG,
+                  onPressed: _addNewTransaction,
+                  label: Icon(
+                    Icons.add,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                )
+              : null
+          : null,
       body: GestureDetector(
         child: Stack(
           children: [
@@ -227,25 +372,33 @@ class _HomePageState extends State<HomePage> {
                 ..scale(scaleFactor)
                 ..rotateY(isDrawerOpen ? -0.5 : 0),
               duration: const Duration(milliseconds: 250),
-              child: _selectedPage == 0 ? homePage() : viewReminders(),
+              child: _selectedPage == 0
+                  ? homePage()
+                  : _selectedPage == 1
+                      ? viewReminders()
+                      : settingPage(),
             ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: isDrawerOpen ? BG : null,
         currentIndex: _selectedPage,
         onTap: selectPage,
         items: [
           BottomNavigationBarItem(
             icon: home,
+            activeIcon: homeActive,
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: reminderIcon,
+            activeIcon: reminderActive,
             label: 'Reminders',
           ),
           BottomNavigationBarItem(
             icon: settings,
+            activeIcon: settingActive,
             label: 'Setting',
           ),
         ],
