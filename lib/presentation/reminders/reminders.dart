@@ -94,7 +94,7 @@ class _RemindersState extends State<Reminders> {
   Widget build(BuildContext context) {
     List<Widget> content = centerWidget(
       const Center(
-        child: Text('I see no reminders in your list'),
+        child: Text('Hey, there is no reminders in your list'),
       ),
     );
     if (userReminder.isNotEmpty) {

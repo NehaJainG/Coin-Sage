@@ -41,8 +41,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 LoginHeader(
+                  imagePath: activeScreen == signin
+                      ? 'assets/image/img1.png'
+                      : 'assets/image/splash_image1.png',
                   header: activeScreen == signin ? signinHead : signupHead,
-                  subMessage: activeScreen == signin ? signinSub : signupSub,
                 ),
                 content,
               ],

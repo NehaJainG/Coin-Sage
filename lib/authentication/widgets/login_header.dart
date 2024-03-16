@@ -4,31 +4,28 @@ class LoginHeader extends StatelessWidget {
   const LoginHeader({
     super.key,
     required this.header,
-    required this.subMessage,
+    required this.imagePath,
   });
 
   final String header;
-  final String subMessage;
+  final String imagePath;
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    //double heigth = MediaQuery.of(context).size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: width * 0.2),
-        Text(
-          header,
-          style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+        Image.asset(
+          imagePath,
+          width: 400,
         ),
         Text(
-          subMessage,
-          maxLines: 2,
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                fontWeight: FontWeight.w400,
+          header,
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                fontSize: 40,
               ),
         ),
       ],
