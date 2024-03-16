@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "570913130168",
+    "firebase_url": "https://coin-sage-default-rtdb.firebaseio.com",
+    "project_id": "coin-sage",
+    "storage_bucket": "coin-sage.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570913130168:android:336e8106e6bb0e5a27164d",
+        "android_client_info": {
+          "package_name": "com.nj.coin_sage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr7DDLVVC-fG7kf_737zuThVNlvRh30Ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
