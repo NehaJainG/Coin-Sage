@@ -1,17 +1,17 @@
-import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:coin_sage/models/reminder.dart';
-
-import 'package:coin_sage/services/reminders.dart';
-
-import 'package:coin_sage/presentation/reminders/add_reminder.dart';
-import 'package:coin_sage/presentation/reminders/reminder_item.dart';
 
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/defaults/icon.dart';
+
+import 'package:coin_sage/models/reminder.dart';
+
+import 'package:coin_sage/presentation/reminders/add_reminder.dart';
+import 'package:coin_sage/presentation/reminders/reminder_item.dart';
+
+import 'package:coin_sage/services/reminders.dart';
+import 'package:coin_sage/services/push_notification.dart';
 
 class Reminders extends StatefulWidget {
   const Reminders({

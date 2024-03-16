@@ -1,4 +1,3 @@
-import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fs;
@@ -10,6 +9,7 @@ import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
 
 import 'package:coin_sage/services/transaction_repo.dart';
+import 'package:coin_sage/services/push_notification.dart';
 import 'package:coin_sage/services/reminders.dart';
 
 // ignore: must_be_immutable

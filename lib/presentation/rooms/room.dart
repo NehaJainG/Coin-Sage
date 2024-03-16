@@ -1,5 +1,3 @@
-import 'package:coin_sage/services/room_repo.dart';
-import 'package:coin_sage/services/user_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fs;
 import 'package:flutter/material.dart';
 
@@ -9,6 +7,9 @@ import 'package:coin_sage/defaults/defaults.dart';
 
 import 'package:coin_sage/models/user.dart';
 import 'package:coin_sage/models/room.dart';
+
+import 'package:coin_sage/services/room_repo.dart';
+import 'package:coin_sage/services/user_repo.dart';
 
 class AddRoomScreen extends StatefulWidget {
   const AddRoomScreen({

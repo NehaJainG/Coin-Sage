@@ -1,13 +1,15 @@
-import 'package:coin_sage/presentation/onboarding/onboarding.dart';
-import 'package:coin_sage/services/push_notification.dart';
 import 'package:flutter/material.dart';
-
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:coin_sage/firebase_options.dart';
+
 import 'package:coin_sage/defaults/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:coin_sage/presentation/app_gate.dart';
+import 'package:coin_sage/presentation/onboarding/onboarding.dart';
+
+import 'package:coin_sage/services/push_notification.dart';
 
 final customisedTheme = ThemeData(
   useMaterial3: true,

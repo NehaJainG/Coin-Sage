@@ -1,8 +1,8 @@
-import 'package:coin_sage/defaults/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
+import 'package:coin_sage/defaults/strings.dart';
 import 'package:coin_sage/defaults/defaults.dart';
 import 'package:coin_sage/models/transaction.dart';
 

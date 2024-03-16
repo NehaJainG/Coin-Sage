@@ -1,6 +1,7 @@
-import 'package:coin_sage/defaults/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'package:coin_sage/defaults/colors.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({

@@ -1,23 +1,23 @@
-import 'package:coin_sage/defaults/defaults.dart';
-import 'package:coin_sage/defaults/strings.dart';
-import 'package:coin_sage/presentation/personal/settings.dart';
-import 'package:coin_sage/services/reminders.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:coin_sage/presentation/reminders/reminders.dart';
-import 'package:coin_sage/presentation/rooms/user_rooms.dart';
-import 'package:coin_sage/presentation/rooms/requests.dart';
-import 'package:coin_sage/presentation/transaction/add_transaction.dart';
-import 'package:coin_sage/presentation/rooms/room.dart';
-
-import 'package:coin_sage/presentation/personal/drawer.dart';
-import 'package:coin_sage/presentation/transaction/transaction_list.dart';
-
-import 'package:coin_sage/models/transaction.dart';
 import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
+import 'package:coin_sage/defaults/defaults.dart';
+import 'package:coin_sage/defaults/strings.dart';
 
+import 'package:coin_sage/models/transaction.dart';
+
+import 'package:coin_sage/presentation/personal/drawer.dart';
+import 'package:coin_sage/presentation/personal/settings.dart';
+import 'package:coin_sage/presentation/rooms/user_rooms.dart';
+import 'package:coin_sage/presentation/rooms/requests.dart';
+import 'package:coin_sage/presentation/rooms/room.dart';
+import 'package:coin_sage/presentation/transaction/add_transaction.dart';
+import 'package:coin_sage/presentation/transaction/transaction_list.dart';
+import 'package:coin_sage/presentation/reminders/reminders.dart';
+
+import 'package:coin_sage/services/reminders.dart';
 import 'package:coin_sage/services/transaction_repo.dart';
 
 class HomePage extends StatefulWidget {

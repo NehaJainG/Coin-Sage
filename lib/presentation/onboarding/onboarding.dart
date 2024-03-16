@@ -1,10 +1,12 @@
-import 'package:coin_sage/defaults/colors.dart';
-import 'package:coin_sage/defaults/strings.dart';
-import 'package:coin_sage/main.dart';
-import 'package:coin_sage/presentation/app_gate.dart';
-import 'package:coin_sage/presentation/onboarding/onboarding_content.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:coin_sage/main.dart';
+
+import 'package:coin_sage/defaults/colors.dart';
+import 'package:coin_sage/defaults/strings.dart';
+import 'package:coin_sage/presentation/app_gate.dart';
+import 'package:coin_sage/presentation/onboarding/onboarding_content.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
