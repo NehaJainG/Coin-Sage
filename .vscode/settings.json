@@ -1,0 +1,7 @@
+{
+    "editor.quickSuggestions": {
+        "other": "off"
+    },
+    "javascript.suggest.names": false,
+    "java.configuration.updateBuildConfiguration": "interactive"
+}
