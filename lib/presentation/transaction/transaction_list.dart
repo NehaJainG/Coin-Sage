@@ -113,7 +113,7 @@ class _TransactionListState extends State<TransactionList> {
             delegate: _SliverAppBarDelegate(
               minHeight: 100,
               maxHeight: 100,
-              child: widget.appBar ?? SizedBox(),
+              child: widget.appBar ?? const SizedBox(),
             ),
           ),
           //above content

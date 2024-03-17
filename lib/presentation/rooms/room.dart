@@ -139,7 +139,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                         ),
                         validator: (value) {
                           if (isNotValidTitle(_titleController.text)) {
-                            print('text error');
+                            //print('text error');
                             return 'Must be between 1 and 20 characters';
                           }
                           return null;
@@ -174,7 +174,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                         height: 200,
                         width: double.infinity,
                         alignment: Alignment.topLeft,
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           border: Border.all(
                               color: Theme.of(context)
@@ -211,7 +211,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                                           //textColor: black,
                                           title: Text(members[index].name),
                                           trailing: IconButton(
-                                            icon: Icon(Icons.close),
+                                            icon: const Icon(Icons.close),
                                             onPressed: () {
                                               setState(() {
                                                 members.removeAt(index);
@@ -226,7 +226,7 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       ),
                       const SizedBox(height: 20),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 30),
+                        margin: const EdgeInsets.symmetric(horizontal: 30),
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.scrim,

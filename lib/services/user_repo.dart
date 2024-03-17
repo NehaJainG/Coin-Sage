@@ -9,8 +9,8 @@ class UserRepo {
 
   // to search one user with email
   static Future<User?> getUser(String email) async {
-    print('here');
-    print(email);
+    //print('here');
+    //print(email);
     final snapshot = await userDB.where("email", isEqualTo: email).get();
 
     final userData = snapshot.docs.map(
@@ -18,7 +18,7 @@ class UserRepo {
         return User.fromSnapshot(e);
       },
     ).firstOrNull;
-    print(userData!.email);
+    //print(userData!.email);
     return userData;
   }
 
@@ -36,13 +36,13 @@ class UserRepo {
   // so if someone adds to room they get request id
   static Future<String> getUserRequestID(String email) async {
     final snapshot = await userDB.where("email", isEqualTo: email).get();
-    print(snapshot);
+    //print(snapshot);
     final requestID = snapshot.docs
         .map(
           (e) => e.data()["requestId"],
         )
         .first;
-    print(requestID);
+    //print(requestID);
     return requestID;
   }
 
@@ -73,10 +73,10 @@ class UserRepo {
   }
 
   static Future addRoomId(String userEmail, String roomID) async {
-    print('add room');
+    //print('add room');
     final userID = await getUser(userEmail);
-    print('returns');
-    print(userID);
+    //print('returns');
+    //print(userID);
     //add room detail to user collection
     await userDB.doc(userID!.id).update(
       {

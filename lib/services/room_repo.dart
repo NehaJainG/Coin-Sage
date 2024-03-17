@@ -71,7 +71,7 @@ class RoomRepositories {
         .doc(roomID)
         .collection('transaction-$userEmail')
         .add(transaction.toJson());
-    if (transaction == app.TransactionType.Income) {
+    if (transaction.type == app.TransactionType.Income) {
       await roomDB.doc(roomID).update({
         'totalAmount': FieldValue.increment(-transaction.amount),
       });
@@ -111,7 +111,7 @@ class RoomRepositories {
       String roomID, List<String> members) async {
     List<app.Transaction> transactionData = [];
     for (String member in members) {
-      print(member);
+      //print(member);
       final snapshot =
           await roomDB.doc(roomID).collection('transaction-$member').get();
 
@@ -144,7 +144,7 @@ class RoomRepositories {
     double invested = 0;
     snapshot.docs.forEach((element) {
       final data = element.data();
-      print(data['type']);
+      //print(data['type']);
       if (data['type'] == app.TransactionType.Income.name) {
         double expense = data['amount']!;
         invested += expense;
@@ -153,9 +153,9 @@ class RoomRepositories {
         totalExpense += expense;
       }
     });
-    print(invested);
-    print(totalExpense);
-    print(roomTotal);
+    //print(invested);
+    //print(totalExpense);
+    //print(roomTotal);
     return {
       'Total Cost': roomTotal.toDouble(),
       'You Owe': totalExpense,

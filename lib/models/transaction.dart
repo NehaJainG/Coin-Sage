@@ -8,7 +8,7 @@ final dateFormatter = DateFormat.yMMMd();
 final timeFormatter = DateFormat.jm();
 
 TimeOfDay parseTimeOfDay(String t) {
-  print(t);
+  //print(t);
   int hour = 0;
   if (t.endsWith('pm')) {
     hour = 12;
@@ -222,7 +222,7 @@ class Debt extends Transaction {
         categ = categories;
       }
     }
-    print('here');
+    //print('here');
 
     return Debt(
       id: document.id,
@@ -280,7 +280,7 @@ class Subscription extends Transaction {
         categ = categories;
       }
     }
-    print(data['amount']);
+    //print(data['amount']);
 
     return Subscription(
       id: document.id,

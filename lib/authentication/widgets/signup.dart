@@ -150,14 +150,14 @@ class _SignUpState extends State<SignUp> {
         email, password, name, displayErrorMessage);
 
     if (user != null) {
-      print("User is successfully created");
+      //print("User is successfully created");
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => HomePage(user: user),
         ),
       );
     } else {
-      print('Error');
+      //print('Error');
     }
   }
 }

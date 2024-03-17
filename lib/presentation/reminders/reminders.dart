@@ -69,10 +69,10 @@ class _RemindersState extends State<Reminders> {
   }
 
   void addReminder() async {
-    print('Click');
+    //print('Click');
     final newReminder = await Navigator.of(context).push<Reminder>(
       MaterialPageRoute(
-        builder: (ctx) => AddReminder(),
+        builder: (ctx) => const AddReminder(),
       ),
     );
     if (newReminder == null) {
@@ -87,7 +87,7 @@ class _RemindersState extends State<Reminders> {
     await ReminderServices.addReminders(newReminder, widget.user.uid);
     await PushNotifications.createReminderNoti(newReminder, message);
     showSnackBar("Your reminder is been set", context);
-    print('okayy');
+    //print('okayy');
   }
 
   @override

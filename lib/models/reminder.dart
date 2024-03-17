@@ -124,10 +124,12 @@ class Reminder {
 
     //what are different category in tht type of transaction, creating the list of values
     //so it becomes to get enum of cateogry(in string) using method defined.
+
     dynamic categoryList = SubscriptionCategory.values;
     if (type == TransactionType.Debt) {
       categoryList = DebtCategory.values;
     }
+    //print(categoryList);
 
     //finally return the reminder object.
     return Reminder(
@@ -173,11 +175,11 @@ class Reminder {
       return;
     }
     if (repeat == Repeat.Month) {
-      dueDate.add(
+      dueDate = dueDate.add(
         const Duration(days: 28),
       );
     } else if (repeat == Repeat.Week) {
-      dueDate.add(
+      dueDate = dueDate.add(
         const Duration(days: 7),
       );
     } else if (repeat == Repeat.Year) {
@@ -187,5 +189,6 @@ class Reminder {
         dueDate.day,
       );
     }
+    //print('$dueDate this');
   }
 }

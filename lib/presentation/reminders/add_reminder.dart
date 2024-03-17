@@ -20,7 +20,7 @@ class AddReminder extends StatefulWidget {
 }
 
 class _AddReminderState extends State<AddReminder> {
-  TransactionType type = TransactionType.Debt;
+  TransactionType _type = TransactionType.Debt;
   late List<DropdownMenuItem> dropdownItems;
   final _formKey = GlobalKey<FormState>();
   double _enteredAmount = 0;
@@ -33,7 +33,7 @@ class _AddReminderState extends State<AddReminder> {
 
   @override
   void initState() {
-    dropdownItems = _dropdownItems(type);
+    dropdownItems = _dropdownItems(_type);
     super.initState();
   }
 
@@ -61,7 +61,7 @@ class _AddReminderState extends State<AddReminder> {
           dueDate: _dueDate!,
           date: DateTime.now(),
           reminderTime: _reminderTime!,
-          type: type,
+          type: _type,
         ),
       );
     }
@@ -111,7 +111,7 @@ class _AddReminderState extends State<AddReminder> {
     if (selectedTime == null) return;
 
     setState(() {
-      print(selectedTime);
+      //print(selectedTime);
       _reminderTime = selectedTime;
     });
   }
@@ -186,6 +186,7 @@ class _AddReminderState extends State<AddReminder> {
     return GestureDetector(
       onTap: () {
         setState(() {
+          _type = type;
           dropdownItems = _dropdownItems(type);
         });
       },
@@ -196,6 +197,10 @@ class _AddReminderState extends State<AddReminder> {
         decoration: BoxDecoration(
           color: heroBlue,
           borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: _type == type ? white : heroBlue,
+            width: 2,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +248,7 @@ class _AddReminderState extends State<AddReminder> {
                   ),
                   Container(
                     width: double.infinity,
-                    margin: EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -390,7 +395,7 @@ class _AddReminderState extends State<AddReminder> {
                           .copyWith(fontWeight: FontWeight.w400),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -398,7 +403,7 @@ class _AddReminderState extends State<AddReminder> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('Cancel'),
+                        child: const Text('Cancel'),
                       ),
                       ElevatedButton(
                         onPressed: saveReminder,

@@ -12,7 +12,6 @@ import 'package:coin_sage/presentation/personal/drawer.dart';
 import 'package:coin_sage/presentation/personal/settings.dart';
 import 'package:coin_sage/presentation/rooms/user_rooms.dart';
 import 'package:coin_sage/presentation/rooms/requests.dart';
-import 'package:coin_sage/presentation/rooms/room.dart';
 import 'package:coin_sage/presentation/transaction/add_transaction.dart';
 import 'package:coin_sage/presentation/transaction/transaction_list.dart';
 import 'package:coin_sage/presentation/reminders/reminders.dart';
@@ -55,14 +54,14 @@ class _HomePageState extends State<HomePage> {
 
   void getTransaction() async {
     isLoading = true;
-    print('before');
+    //print('before');
     List<Transaction>? list =
         await TransactionRepository.getTransactions(widget.user.uid);
     if (list == null) {
       return;
     }
     userTransaction = [];
-    print('after');
+    //print('after');
     setState(() {
       userTransaction.addAll(list);
       userTransaction.sort((a, b) => b.date.compareTo(a.date));
@@ -185,15 +184,6 @@ class _HomePageState extends State<HomePage> {
     await TransactionRepository.addTransaction(newTransaction, widget.user.uid);
     showSnackBar("Transaction is added successfully", context);
     getTransaction();
-  }
-
-  void _addNewRoom() {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      useSafeArea: true,
-      builder: (ctx) => AddRoomScreen(user: widget.user),
-    );
   }
 
   void _viewRooms() {

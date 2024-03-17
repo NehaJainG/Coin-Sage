@@ -34,7 +34,7 @@ class _RequestScreenState extends State<RequestScreen> {
     setState(() {
       isLoading = true;
     });
-    print(widget.user.email);
+    //print(widget.user.email);
     final requests =
         await RoomRepositories.getRoomsRequests(widget.user.email!);
     setState(() {

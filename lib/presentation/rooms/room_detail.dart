@@ -50,7 +50,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
     final data =
         await RoomRepositories.getStats(widget.room.id!, widget.user.email!);
     if (data.values.isEmpty) return;
-    print('stats');
+    //print('stats');
     setState(() {
       statsVal = data;
     });
@@ -63,12 +63,12 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
       ),
     );
     if (newTransaction == null) return;
-    print(newTransaction);
+    //print(newTransaction);
     setState(() {
-      print('here');
+      //print('here');
       roomTransaction.add(newTransaction);
     });
-    print(newTransaction);
+    //print(newTransaction);
     await RoomRepositories.addTransactionToRoom(
         newTransaction, widget.room.id!, widget.user.email!);
   }
@@ -173,7 +173,7 @@ class _RoomDetailsScreenState extends State<RoomDetailsScreen> {
     return Container(
       width: width,
       height: 90,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: foreground,
         borderRadius: BorderRadius.circular(10),

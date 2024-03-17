@@ -37,6 +37,7 @@ class _ReminderItemState extends State<ReminderItem> {
 
     //update the due date to next due Date
     widget.reminder.updateDueDateOnPaid();
+    //print("after");
 
     //if the the reminder is set as dont repeat, so delete once paid
     if (widget.reminder.repeat == Repeat.DontRepeat) {
@@ -63,7 +64,7 @@ class _ReminderItemState extends State<ReminderItem> {
   @override
   Widget build(BuildContext context) {
     String title = widget.reminder.type.name;
-    print(widget.reminder.reminderDateTime);
+    //print(widget.reminder.reminderDateTime);
     if (title.isNotEmpty) {
       title = widget.reminder.comments.substring(0, 1).toUpperCase() +
           widget.reminder.comments.substring(1);
