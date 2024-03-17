@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:coin_sage/firebase_options.dart';
 
@@ -20,19 +21,20 @@ final customisedTheme = ThemeData(
 
   //textTheme: GoogleFonts.poppinsTextTheme(),
 );
-final darkTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    brightness: Brightness.dark,
-    seedColor: heroBlue,
-  ),
+// final darkTheme = ThemeData(
+//   useMaterial3: true,
+//   colorScheme: ColorScheme.fromSeed(
+//     brightness: Brightness.dark,
+//     seedColor: heroBlue,
+//   ),
 
-  //textTheme: GoogleFonts.poppinsTextTheme(),
-);
+//   //textTheme: GoogleFonts.poppinsTextTheme(),
+// );
 
 bool? seenOnboard;
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   SharedPreferences prefs = await SharedPreferences.getInstance();
   seenOnboard = prefs.getBool('seenOnboard') ?? false;
   await Firebase.initializeApp(
@@ -51,7 +53,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Coin Sage',
       theme: customisedTheme,
-      darkTheme: darkTheme,
       home: seenOnboard == true ? const AppGate() : const OnBoardingScreen(),
       debugShowCheckedModeBanner: false,
       // ,

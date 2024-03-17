@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -52,12 +53,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDr7DDLVVC-fG7kf_737zuThVNlvRh30Ag',
-    appId: '1:570913130168:android:038fc99c6359e6d927164d',
-    messagingSenderId: '570913130168',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env['BACKEND_API_KEY']!,
+    appId: dotenv.env['BACKEND_ID']!,
+    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID']!,
     projectId: 'coin-sage',
-    databaseURL: 'https://coin-sage-default-rtdb.firebaseio.com',
+    databaseURL: dotenv.env['DATABASE_URL']!,
     storageBucket: 'coin-sage.appspot.com',
   );
 }
