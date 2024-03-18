@@ -226,17 +226,26 @@ class _AddRoomScreenState extends State<AddRoomScreen> {
                       ),
                       const SizedBox(height: 20),
                       Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 30),
+                        // margin: const EdgeInsets.symmetric(horizontal: 10),
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.scrim,
+                          color: BG,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: TextButton(
                           onPressed: createRoom,
-                          child: const Text('Create Room'),
+                          child: Text(
+                            'Create Room',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(
+                                  color: white,
+                                ),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

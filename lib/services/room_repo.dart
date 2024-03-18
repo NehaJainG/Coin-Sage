@@ -51,6 +51,7 @@ class RoomRepositories {
   //to get all requests of the users:
   static Future<List<Room>> getRoomsRequests(String email) async {
     final request = await UserRepo.getUserRequestID(email);
+    print(request);
     final snapshot = await _db.collection("Requests").doc(request).get();
 
     final roomTitle = snapshot.data()!.values.toList();

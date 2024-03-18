@@ -6,7 +6,7 @@ import 'package:coin_sage/defaults/icon.dart';
 import 'package:coin_sage/defaults/colors.dart';
 import 'package:coin_sage/models/room.dart';
 
-import 'package:coin_sage/presentation/rooms/room.dart';
+import 'package:coin_sage/presentation/rooms/add_room.dart';
 import 'package:coin_sage/presentation/rooms/room_detail.dart';
 import 'package:coin_sage/services/room_repo.dart';
 
@@ -84,8 +84,8 @@ class _UserRoomsScreenState extends State<UserRoomsScreen> {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            subtitle: const Text(
-              'Some description',
+            subtitle: Text(
+              '${userRooms[index].members!.length} members',
             ),
           );
         },

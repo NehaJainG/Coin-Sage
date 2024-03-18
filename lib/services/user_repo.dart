@@ -48,7 +48,7 @@ class UserRepo {
 
   static Future addRequestId(String email, Map<String, String> room) async {
     final requestId = await getUserRequestID(email);
-    await _db.collection("Requests").doc(requestId).update(room);
+    await _db.collection("Requests").doc(requestId).set(room);
   }
 
   static Future removeRequestId(String email, String roomId) async {
