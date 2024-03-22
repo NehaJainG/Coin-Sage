@@ -34,5 +34,5 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 ## License
 
-This project is licensed under the MIT License. See the <a href="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/lincence.txt">LICENSE</a> file for details.
+This project is licensed under the MIT License. See the <a href="https://github.com/NehaJainG/Coin-Sage/blob/5854d23b81a1983fe9118a66e4432955e8777417/license.txt">LICENSE</a> file for details.
 
