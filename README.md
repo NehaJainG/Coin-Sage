@@ -11,19 +11,20 @@ Coin Sage is a user-friendly financial management app designed to help individua
 
 - **Financial Insights:** Access valuable insights and recommendations based on your spending patterns and financial data. Make informed decisions to achieve your financial goals.
 
-##Screenshots
+## Screenshots
 
-<img src="https://github.com/NehaJainG/Coin-Sage/assets/127672058/56ad1250-1051-4791-b0cd-5712b6dfd2d2" alt="scr4" height="500"/>
-
-<img src="https://github.com/NehaJainG/Coin-Sage/assets/127672058/52e11e79-0a0d-427c-88bc-67a006e8095c" alt="scr7" height="500"/>
-
-<img src="https://github.com/NehaJainG/Coin-Sage/assets/127672058/79d04715-9757-40b2-8144-444061b10561" alt="scr8" height="500"/>
-<br><br>
-<img src="https://github.com/NehaJainG/Coin-Sage/assets/127672058/ba75cb8c-88eb-4297-9755-135db6c00f2f" alt="scr10" height="500"/>
-
-<img src="https://github.com/NehaJainG/Coin-Sage/assets/127672058/953f66e1-4f82-407e-a917-afeea65c267a" alt="screenshot1" height="500"/>
-
-<img src="https://github.com/NehaJainG/Coin-Sage/assets/127672058/f8f7f411-cbbb-4db4-a290-7e54f36029bd" alt="scr6" height="500"/>
+<table>
+  <tr>
+    <td><img src="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/screenshots/scr7.jpg" alt="scr4" height="500"/></td>
+    <td><img src="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/screenshots/scr4.jpg" alt="scr7" height="500"/></td>
+    <td><img src="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/screenshots/scr8.jpg" alt="scr8" height="500"/></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/screenshots/screenshot1.jpg" alt="scr10" height="500"/></td>
+    <td><img src="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/screenshots/scr10.jpg" alt="screenshot1" height="500"/></td>
+    <td><img src="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/screenshots/scr6.jpg" alt="scr6" height="500"/></td>
+  </tr>
+</table>
 
 
 ## Contributing
@@ -33,5 +34,5 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the <a href="https://github.com/NehaJainG/Coin-Sage/blob/1b7ab1230c30992b8b72e48433e875ef0218e114/lincence.txt">LICENSE</a> file for details.
 
